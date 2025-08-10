@@ -140,4 +140,24 @@ document.addEventListener("DOMContentLoaded", () => {
   if (!useDynamicColor) {
     setAutoColor();
   }
+
+  // 双击背景弹出加油模态框
+  document.querySelector('.overlay').addEventListener('dblclick', function() {
+    const modal = document.getElementById('cheerModal');
+    modal.classList.add('active');
+    // 3秒后自动关闭
+    setTimeout(() => {
+      modal.classList.remove('active');
+    }, 3000);
+  });
+  document.addEventListener('dblclick', function() {
+    const cheerMessage = document.getElementById('cheerMessage');
+    const blurContainer = document.querySelector('.blur-container');
+    cheerMessage.style.opacity = '1';
+    blurContainer.classList.add('blur-background');
+    setTimeout(() => {
+        cheerMessage.style.opacity = '0';
+        blurContainer.classList.remove('blur-background');
+    }, 2000);
+});
 });
