@@ -7,30 +7,45 @@ body {
     display: flex;
     justify-content: center;
     align-items: center;
-    background-image: url('https://api.paugram.com/bing'); /* 替换为您的背景图片URL */
+    background-color: #0a0a0a; /* 深色背景 */
+    background-image: url('https://tc-new.z.wiki/autoupload/f/psmpKOKkqNsLYQfgjt2XBmShhF5SO20rmYlH2FEEX4iyl5f0KlZfm6UsKj-HyTuv/20250810/55Td/3840X2160/stsr.png'); /* 替换为您的背景图片URL */
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
     position: relative; /* 为了在背景上添加遮罩层 */
+    color: #e0e0e0; /* 默认文本颜色 */
 }
 h1 {
     font-size: 36px;
     margin-bottom: 10px;
 }
+h1:hover {
+    transform: scale(1.02);
+}
 .countdown {
     font-size: 48px;
     font-weight: bold;
     margin-bottom: 20px;
+    color: #ffffff;
+    text-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
+    transition: transform 0.3s ease;
+}
+.countdown:hover {
+    transform: scale(1.03);
 }
 .greeting {
     font-size: 24px;
     margin-top: 20px;
     display: none;
+    color: #f0f0f0;
+    text-shadow: 0 0 4px rgba(255, 255, 255, 0.3);
 }
 .hitokoto {
     font-size: 20px;
-    margin-top: 30px;
+    margin-top: 60px; /* 增加上边距使位置下移 */
     font-style: italic;
+    color: #a0a0a0; /* 颜色调淡 */
+    text-shadow: 0 0 2px rgba(255, 255, 255, 0.1);
 }
 .overlay {
     position: absolute;
@@ -38,7 +53,7 @@ h1 {
     left: 0;
     width: 100%;
     height: 100%;
-    background-color: rgba(255, 255, 255, 0.7); /* 浅灰色遮罩 */
+    background-color: rgba(10, 10, 10, 0.5); /* 深色遮罩 */
     z-index: 1;
 }
 footer {
@@ -49,26 +64,57 @@ footer {
     text-align: center;
     box-sizing: border-box;
     z-index: 2; /* 设置页脚的z-index，高于遮罩层 */
+    color: #d0d0d0;
+    text-shadow: 0 0 3px rgba(255, 255, 255, 0.2);
 }
 .content {
     position: relative;
     z-index: 2;
     padding-bottom: 60px; /* 根据页脚高度调整 */
 }
+
+/* 逐行显示动画 */
+.content > * {
+    opacity: 0;
+    animation: fadeIn 1s ease-out forwards;
+}
+
+h1 {
+    animation-delay: 0.2s;
+}
+
+.countdown {
+    animation-delay: 0.4s;
+}
+
+.greeting {
+    animation-delay: 0.6s;
+}
+
+.hitokoto {
+    animation-delay: 0.8s;
+}
 .dynamic-color {
-    animation: colorChange 10s infinite;
+    animation: colorChange 200s infinite ease-in-out;
 }
 @keyframes colorChange {
-    0% { color: #ff0000; }
-    14% { color: #ff7f00; }
-    28% { color: #ffff00; }
-    42% { color: #00ff00; }
-    56% { color: #0000ff; }
-    70% { color: #4b0082; }
-    84% { color: #9400d3; }
-    100% { color: #ff0000; }
+    0% { color: #ff4444; }
+    12.5% { color: #ff9900; }
+    25% { color: #ffee00; }
+    37.5% { color: #66ff66; }
+    50% { color: #66ccff; }
+    62.5% { color: #9966ff; }
+    75% { color: #cc66ff; }
+    87.5% { color: #ff66cc; }
+    100% { color: #ff4444; }
 }
 .auto-color {
-    color: black; /* 默认颜色为黑色 */
-    transition: color 0.5s ease;
+    color: #f0f0f0; /* 浅灰色文字 */
+    transition: color 0.5s ease, text-shadow 0.5s ease, transform 0.3s ease;
+    text-shadow: 0 0 8px rgba(255, 255, 255, 0.5);
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
 }

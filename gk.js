@@ -1,6 +1,6 @@
 // 选择启用动态取色功能或自动颜色调整
 const useDynamicColor = true; // 若不需要动态取色，改为 false
-const useLocalTime = false; // 若要使用本地时间，改为 true；否则使用服务器时间
+const useLocalTime = true; // 若要使用本地时间，改为 true；否则使用服务器时间
 
 function fetchServerTime() {
   var xhr = new XMLHttpRequest();
