@@ -1,3 +1,18 @@
+.background-container {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    padding: 50px;
+    margin: -50px;
+    background-image: url('stsr.png');
+    background-size: cover;
+    background-position: center;
+    z-index: 0;
+    background-color: #0a0a0a;
+}
+
 body {
     font-family: 'Arial', sans-serif;
     text-align: center;
@@ -7,13 +22,14 @@ body {
     display: flex;
     justify-content: center;
     align-items: center;
-    background-color: #0a0a0a; /* 深色背景 */
-    background-image: url('https://tc-new.z.wiki/autoupload/f/psmpKOKkqNsLYQfgjt2XBmShhF5SO20rmYlH2FEEX4iyl5f0KlZfm6UsKj-HyTuv/20250810/55Td/3840X2160/stsr.png'); /* 替换为您的背景图片URL */
-    background-size: cover;
-    background-position: center;
-    background-repeat: no-repeat;
     position: relative; /* 为了在背景上添加遮罩层 */
     color: #e0e0e0; /* 默认文本颜色 */
+    overflow: hidden; /* 隐藏滚动条 */
+}
+
+.blur-background {
+    filter: blur(8px);
+    transition: filter 0.5s ease;
 }
 h1 {
     font-size: 36px;

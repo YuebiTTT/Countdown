@@ -21,36 +21,44 @@ function padZero(num) {
   return num < 10 ? '0' + num : num;
 }
 
+// 考试类型配置
+const exams = [
+    { name: "高考", year: 2026, month: 5, day: 7 },
+    { name: "调研考", year: 2025, month: 7, day: 21 }
+];
+let currentExamIndex = 0;
+
 function updateCountdown(time) {
-  var today = time || new Date();
-  var currentYear = today.getFullYear();
-  var examDateStart = new Date(currentYear, 5, 7); // 6月7日，月份从0开始计数
-  var examDateEnd = new Date(currentYear, 5, 9, 18, 0, 0); // 6月9日 18:00
-  var nextYearExamDate = new Date(currentYear + 1, 5, 7); // 下一年的高考日期
+    var today = time || new Date();
+    // 获取当前选中的考试配置
+    const currentExam = exams[currentExamIndex];
+    var currentYear = currentExam.year || today.getFullYear(); // 使用考试配置中的年份或当前年份
+    var examDateStart = new Date(currentYear, currentExam.month, currentExam.day);
+    var examDateEnd = new Date(currentYear, currentExam.month, currentExam.day, 18, 0, 0);
 
-  if (today >= examDateStart && today <= examDateEnd) {
-    document.getElementById("countdown").style.display = "none";
-    document.getElementById("greeting").style.display = "block";
-    document.getElementById("greeting").innerText = "今年的高考进行中，祝考试的同学们旗开得胜，金榜题名！";
-  } else {
-    document.getElementById("greeting").style.display = "none";
-    document.getElementById("countdown").style.display = "block";
-    var timeDiff = examDateStart - today;
-    if (today > examDateEnd) {
-      timeDiff = nextYearExamDate - today;
-      currentYear++;
+    // 更新考试类型显示
+    document.getElementById("examType").textContent = currentExam.name;
+
+    if (today >= examDateStart && today <= examDateEnd) {
+        document.getElementById("countdown").style.display = "none";
+        document.getElementById("greeting").style.display = "block";
+        document.getElementById("greeting").innerText = `今天是${currentExam.name}日，祝考试顺利！`;
+    } else {
+        document.getElementById("greeting").style.display = "none";
+        document.getElementById("countdown").style.display = "block";
+        var timeDiff = examDateStart - today;
+        // 移除年份自动递增逻辑
+        var days = Math.floor(timeDiff / (1000 * 60 * 60 * 24));
+        var hours = padZero(Math.floor((timeDiff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)));
+        var minutes = padZero(Math.floor((timeDiff % (1000 * 60 * 60)) / (1000 * 60)));
+        var seconds = padZero(Math.floor((timeDiff % (1000 * 60)) / 1000));
+
+        document.getElementById("days").innerText = days;
+        document.getElementById("hours").innerText = hours;
+        document.getElementById("minutes").innerText = minutes;
+        document.getElementById("seconds").innerText = seconds;
+        document.getElementById("year").innerText = currentYear;
     }
-    var days = Math.floor(timeDiff / (1000 * 60 * 60 * 24));
-    var hours = padZero(Math.floor((timeDiff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)));
-    var minutes = padZero(Math.floor((timeDiff % (1000 * 60 * 60)) / (1000 * 60)));
-    var seconds = padZero(Math.floor((timeDiff % (1000 * 60)) / 1000));
-
-    document.getElementById("days").innerText = days;
-    document.getElementById("hours").innerText = hours;
-    document.getElementById("minutes").innerText = minutes;
-    document.getElementById("seconds").innerText = seconds;
-    document.getElementById("year").innerText = currentYear;
-  }
 }
 
 function fetchHitokoto() {
@@ -129,35 +137,51 @@ function initCountdown() {
 }
 
 document.addEventListener("DOMContentLoaded", () => {
-  // 获取时间并更新倒计时
-  initCountdown();
-  
-  // 获取一言
-  fetchHitokoto();
-  setInterval(fetchHitokoto, 3600000);
+    // 获取时间并更新倒计时
+    initCountdown();
+    
+    // 获取一言
+    fetchHitokoto();
+    setInterval(fetchHitokoto, 3600000);
 
-  // 动态设置字体颜色
-  if (!useDynamicColor) {
-    setAutoColor();
-  }
+    // 动态设置字体颜色
+    if (!useDynamicColor) {
+        setAutoColor();
+    }
 
-  // 双击背景弹出加油模态框
-  document.querySelector('.overlay').addEventListener('dblclick', function() {
-    const modal = document.getElementById('cheerModal');
-    modal.classList.add('active');
-    // 3秒后自动关闭
-    setTimeout(() => {
-      modal.classList.remove('active');
-    }, 3000);
-  });
+    // 考试类型切换点击事件
+    document.getElementById("examType").addEventListener("click", () => {
+        currentExamIndex = (currentExamIndex + 1) % exams.length;
+        updateCountdown(new Date());
+    });
+
+    // 双击背景弹出加油模态框
+    document.querySelector('.overlay').addEventListener('dblclick', function() {
+        const modal = document.getElementById('cheerModal');
+        modal.classList.add('active');
+        // 3秒后自动关闭
+        setTimeout(() => {
+            modal.classList.remove('active');
+        }, 3000);
+    });
   document.addEventListener('dblclick', function() {
-    const cheerMessage = document.getElementById('cheerMessage');
-    const blurContainer = document.querySelector('.blur-container');
-    cheerMessage.style.opacity = '1';
-    blurContainer.classList.add('blur-background');
-    setTimeout(() => {
-        cheerMessage.style.opacity = '0';
-        blurContainer.classList.remove('blur-background');
-    }, 2000);
-});
+      const currentExam = exams[currentExamIndex];
+      const cheerMessage = document.getElementById('cheerMessage');
+      const blurElements = document.querySelectorAll('.blur-target, .background-container');
+      
+      // 先应用模糊效果
+      blurElements.forEach(el => el.classList.add('blur-background'));
+      
+      // 延迟0.5秒后显示加油消息
+      setTimeout(() => {
+          cheerMessage.textContent = `${currentExam.name}加油！！！！！ヾ(≧ ▽ ≦)ゝ`;
+          cheerMessage.style.opacity = '1';
+          
+          // 2秒后恢复原状
+          setTimeout(() => {
+              cheerMessage.style.opacity = '0';
+              blurElements.forEach(el => el.classList.remove('blur-background'));
+          }, 2000);
+      }, 500);
+  });
 });
