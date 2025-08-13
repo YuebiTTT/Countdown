@@ -1,73 +1,69 @@
-# 高考倒计时
+# 高考倒计时 (Fork 版本)
 
-- 显示距离高考的剩余天数
-- 动态更新时间
-- 简洁的用户界面
+一个优雅的高考倒计时网页应用，显示距离高考的剩余时间，并提供多种自定义功能和视觉效果。本项目从原仓库[Gasolcloudteam/Countdown](https://github.com/Gasolcloudteam/Countdown) fork而来，并进行了功能增强和视觉优化。
 
-今年的高考过后，自动切换到下一年。详见下方运行示例图。
+## ✨ 主要功能
 
-示例站点：[https://blog.xingchencloud.top/gkdjs.html](https://blog.xingchencloud.top/gkdjs.html)
+- 显示距离高考的剩余天数、小时、分钟和秒数
+- 支持多种考试类型切换（高考、调研考等）
+- 点击页面任意位置触发波纹扩散特效
+- 双击背景显示加油鼓励动画和文字效果
+- 动态文字颜色变化，提升视觉体验
+- 自动从背景提取颜色，确保文字可读性
+- 随机名言警句展示，提供学习动力
+- 响应式设计，适配各种屏幕尺寸
+- 简洁美观的UI设计，带有平滑过渡动画
 
-## 运行示例
+## 📸 界面预览
 
-1、平时正常倒计时的样子。
+### 正常倒计时状态
+显示距离选定考试的精确倒计时时间，背景使用自定义图片，文字带有动态颜色效果。
 
-![01](./images/GK-01.png)
+### 考试期间状态
+考试当天会显示鼓励信息，替换倒计时显示。
 
-~~2、高考中（一般为每年的6月7、8、9日）则显示为这个样子。~~【因为逻辑问题，该功能修正了一下，效果已更改】![02](./images/GK-02.png)
+### 点击波纹特效
+点击页面任意位置会产生蓝绿色系的波纹扩散效果，每次点击的波纹大小和颜色略有不同，创造丰富的视觉体验。
 
-3、~~当今年的高考结束后（6月10日开始），~~  当时间达到6月9日的18：01后，则开始倒计时第二年高考时间。
+### 双击加油效果
+双击页面会触发模糊背景和大型鼓励文字动画，增强互动体验。
 
-![03](./images/GK-03.png)
+## ⚙️ 自定义配置
 
-# 修改使用
+### 考试类型设置
+在`gk.js`文件中修改`exams`数组，可以添加或修改考试类型
 
-克隆本仓库
+### 视觉效果控制
+- 修改`useDynamicColor`变量控制是否启用动态颜色变化
+- 修改`useLocalTime`变量选择使用本地时间或服务器时间
+- 在`gk.css`中调整`ripple`相关样式可以修改点击波纹效果
 
-```bash
-git clone https://github.com/Gasolcloudteam/Countdown
+### 背景图片修改
+替换`gk.css`中`.background-container`的`background-image`属性值，可自定义背景图片：
+```css
+.background-container {
+    background-image: url('https://tc-new.z.wiki/autoupload/f/psmpKOKkqNsLYQfgjt2XBmShhF5SO20rmYlH2FEEX4iyl5f0KlZfm6UsKj-HyTuv/20250810/55Td/3840X2160/stsr.png');
+}
 ```
 
-对于新手和特别在意硬盘空间占用的人：请克隆完毕后自行删除除了 `index.html` `gk.css` `gk.js` 以外的其他文件，只需要保留这三个文件即可运行。
+## 🚀 使用方法
 
-#### 一些修改说明
+1. 克隆本仓库：
+```bash
+git clone https://github.com/yourusername/Countdown.git
+cd Countdown
+```
 
-可自行调节 文字是否动态取色，见 `gk.js` 里面的 `const useDynamicColor = true;`
+2. 直接在浏览器中打开`index.html`文件即可运行，无需额外依赖
 
-可选择调用本地时钟或者调用时钟服务器作为倒计时时间，还是 `gk.js` 里面的 `const useLocalTime = false;`
+3. 如需修改配置，编辑`gk.js`和`gk.css`文件后刷新页面即可生效
 
-背景也可以自行更改，见 `gk.css` 里面的 `background-image: url('https://api.paugram.com/bing');` 这里默认使用保罗的Bing每日壁纸API。
+## 📄 许可证
 
-如果遇到突发情况（比如前几年新冠）导致高考时间调整，可自行更改相关代码。本代码可以直接编辑保存后在浏览器打开查看，也可以自己部署到服务器绑定域名随时查看，如果您是老师，可以将其作为班级教学电脑桌面壁纸。
+本项目基于MIT许可证开源 - 详见[LICENSE](LICENSE)文件
 
-## 贡献
+## 🙏 致谢
 
-欢迎贡献！请提交拉取请求。
-
-## 致谢以下项目
-
-随机一言功能基于 <a target="_blank" href="https://hitokoto.cn/">一言</a> API 实现。Bing每日壁纸背景API由 <a target="_blank" href="https://api.paugram.com/help/bing">保罗</a> 提供。
-
-## 许可证
-
-> MIT License
->
-> Copyright (c) 2024 星尘
->
-> Permission is hereby granted, free of charge, to any person obtaining a copy
-> of this software and associated documentation files (the "Software"), to deal
-> in the Software without restriction, including without limitation the rights
-> to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-> copies of the Software, and to permit persons to whom the Software is
-> furnished to do so, subject to the following conditions:
->
-> The above copyright notice and this permission notice shall be included in all
-> copies or substantial portions of the Software.
->
-> THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-> IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-> FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-> AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-> LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-> OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-> SOFTWARE.
+- 原项目作者：[Gasolcloudteam](https://github.com/Gasolcloudteam)
+- 一言API提供随机名言功能
+- 背景图片API服务
