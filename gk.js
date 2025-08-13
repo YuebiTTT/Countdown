@@ -185,3 +185,40 @@ document.addEventListener("DOMContentLoaded", () => {
       }, 500);
   });
 });
+
+// 添加点击波纹特效
+document.addEventListener('click', function(e) {
+  // 创建主波纹
+  createRipple(e, 1);
+  
+  // 创建次级波纹，增加层次感
+  setTimeout(() => {
+    createRipple(e, 0.7, 0.2);
+  }, 100);
+});
+
+function createRipple(e, scaleFactor, delay = 0) {
+  const ripple = document.createElement('div');
+  ripple.classList.add('ripple');
+  // 随机大小变化 (80-140px)
+  const size = Math.random() * 60 + 80 * scaleFactor;
+  ripple.style.width = `${size}px`;
+  ripple.style.height = `${size}px`;
+  // 计算点击位置
+  const x = e.clientX - size / 2;
+  const y = e.clientY - size / 2;
+  // 设置波纹位置和样式
+  ripple.style.left = `${x}px`;
+  ripple.style.top = `${y}px`;
+  ripple.style.animationDelay = `${delay}s`;
+  
+  // 使用HSL颜色模型创建蓝绿色系渐变 (更准确的颜色控制)
+  const hue = Math.random() * 60 + 180; // 180-240 蓝绿色系
+  ripple.style.background = `radial-gradient(circle, hsla(${hue}, 100%, 70%, 0.4) 0%, hsla(${hue}, 100%, 70%, 0.1) 100%)`;
+  document.body.appendChild(ripple);
+  
+  // 动画结束后移除元素
+  ripple.addEventListener('animationend', () => {
+    ripple.remove();
+  });
+}
