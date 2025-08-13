@@ -49,7 +49,7 @@
 ## 使用方法
 
 ### 直接体验
-访问(https://yuebittt.github.io/Countdown/)即可
+访问[此处](https://yuebittt.github.io/Countdown/)即可
 
 ### 本地部署
 
