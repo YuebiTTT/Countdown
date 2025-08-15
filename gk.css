@@ -6,7 +6,7 @@
     height: 100vh;
     padding: 50px;
     margin: -50px;
-    background-image: url('https://tc-new.z.wiki/autoupload/f/psmpKOKkqNsLYQfgjt2XBmShhF5SO20rmYlH2FEEX4iyl5f0KlZfm6UsKj-HyTuv/20250810/55Td/3840X2160/stsr.png'); /* 替换为您的背景图片URL */
+    background-image: url(/stsr.png); /* 替换为您的背景图片URL */
     background-size: cover;
     background-position: center;
     z-index: 0;
