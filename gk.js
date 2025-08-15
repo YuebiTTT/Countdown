@@ -23,16 +23,45 @@ function padZero(num) {
 
 // 考试类型配置
 const exams = [
-    { name: "高考", year: 2026, month: 5, day: 7 },
-    { name: "调研考", year: 2025, month: 7, day: 21 }
+    { name: "调研考", year: 2025, month: 7, day: 21 },
+    { name: "零模", year: 2025, month: 11, day: 23 },
+    { name: "一模", year: 2026, month: 2, day: 19 },
+    { name: "二模", year: 2026, month: 3, day: 21 },
+    { name: "高考", year: 2026, month: 5, day: 7 }
 ];
-let currentExamIndex = 0;
+
+// 自动选择最近的一次大考
+function selectNearestExam() {
+    const today = new Date();
+    let nearestExamIndex = 0;
+    let minDaysDifference = Infinity;
+
+    for (let i = 0; i < exams.length; i++) {
+        const examDate = new Date(exams[i].year, exams[i].month, exams[i].day);
+        const timeDiff = examDate - today;
+        const daysDifference = Math.ceil(timeDiff / (1000 * 60 * 60 * 24));
+
+        // 只考虑未来的考试
+        if (daysDifference >= 0 && daysDifference < minDaysDifference) {
+            minDaysDifference = daysDifference;
+            nearestExamIndex = i;
+        }
+    }
+
+    return nearestExamIndex;
+}
+
+// 初始显示高考 (找到exams数组中名称包含'高考'的项的索引)
+let currentExamIndex = exams.findIndex(exam => exam.name.includes('高考'));
+
+// 定义显示模式：'gaokao'表示显示高考，'nearest'表示显示最近的大考
+let displayMode = 'gaokao';
 
 function updateCountdown(time) {
     var today = time || new Date();
     // 获取当前选中的考试配置
     const currentExam = exams[currentExamIndex];
-    var currentYear = currentExam.year || today.getFullYear(); // 使用考试配置中的年份或当前年份
+    var currentYear = currentExam.year; // 使用考试配置中的年份
     var examDateStart = new Date(currentYear, currentExam.month, currentExam.day);
     var examDateEnd = new Date(currentYear, currentExam.month, currentExam.day, 18, 0, 0);
 
@@ -149,9 +178,17 @@ document.addEventListener("DOMContentLoaded", () => {
         setAutoColor();
     }
 
-    // 考试类型切换点击事件
+    // 考试类型切换点击事件 - 实现点击切换功能
     document.getElementById("examType").addEventListener("click", () => {
-        currentExamIndex = (currentExamIndex + 1) % exams.length;
+        if (displayMode === 'gaokao') {
+            // 从高考切换到最近的大考
+            displayMode = 'nearest';
+            currentExamIndex = selectNearestExam();
+        } else {
+            // 从最近的大考切换回高考
+            displayMode = 'gaokao';
+            currentExamIndex = exams.findIndex(exam => exam.name.includes('高考'));
+        }
         updateCountdown(new Date());
     });
 
