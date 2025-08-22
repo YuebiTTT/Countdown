@@ -6,7 +6,7 @@
     height: 100vh;
     padding: 50px;
     margin: -50px;
-    background-image: url(/stsr.png); /* 替换为您的背景图片URL */
+    background-image: url(./stsr.png); /* 替换为您的背景图片URL */
     background-size: cover;
     background-position: center;
     z-index: 0;
