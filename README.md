@@ -1,6 +1,6 @@
 # 高考倒计时
 
-一个优雅的高考倒计时网页应用，显示距离高考的剩余时间，并提供多种自定义功能和视觉效果。本项目从原仓库[Gasolcloudteam/Countdown](https://github.com/Gasolcloudteam/Countdown) fork而来，并进行了功能增强和视觉优化。
+一个优雅的高考倒计时网页应用，显示距离高考的剩余时间，并提供多种自定义功能和视觉效果。本项目从原仓库[Gasolcloudteam/Countdown](https://github.com/Gasolcloudteam/Countdown) fork而来，并进行了功能增强、视觉优化和代码修复。
 
 ## 主要功能
 
@@ -13,6 +13,7 @@
 - 随机名言警句展示，提供学习动力
 - 响应式设计，适配各种屏幕尺寸
 - 简洁美观的UI设计，带有平滑过渡动画
+- 自定义背景功能（右下角透明图标控制）
 
 ## 界面预览
 
@@ -39,12 +40,29 @@
 - 在`gk.css`中调整`ripple`相关样式可以修改点击波纹效果
 
 ### 背景图片修改
-替换`gk.css`中`.background-container`的`background-image`属性值，可自定义背景图片：
+
+有两种方式修改背景图片：
+
+1. **使用界面控制**：将鼠标移至右下角透明图标处，点击后在弹出的对话框中可选择预设背景或输入自定义图片URL
+
+2. **直接修改代码**：替换`gk.css`中`.background-container`的`background-image`属性值：
 ```css
 .background-container {
     background-image: url('https://tc-new.z.wiki/autoupload/f/psmpKOKkqNsLYQfgjt2XBmShhF5SO20rmYlH2FEEX4iyl5f0KlZfm6UsKj-HyTuv/20250810/55Td/3840X2160/stsr.png');
 }
 ```
+
+### 背景图标样式
+右下角的自定义背景图标已修改为透明色，可在`gk.css`中调整：
+```css
+.custom-bg-icon {
+    background-color: transparent;  /* 透明背景 */
+    /* 其他样式 */
+}
+```
+
+### 鼠标检测优化
+为解决右下角图标显示不稳定的问题，已优化鼠标移动检测逻辑，增加了隐藏延迟并改进了位置检测算法。
 
 ## 使用方法
 
