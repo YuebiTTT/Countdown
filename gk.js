@@ -16,20 +16,68 @@ function initCustomBackground() {
     }
 
     // 鼠标移动检测，显示/隐藏自定义背景图标
+    let hideTimer;
     document.addEventListener('mousemove', (e) => {
+        const windowWidth = window.innerWidth;
         const windowHeight = window.innerHeight;
+        const mouseX = e.clientX;
         const mouseY = e.clientY;
+        const cornerAreaWidth = 200; // 右下角区域宽度
+        const cornerAreaHeight = 200; // 右下角区域高度
+        
+        // 清除之前的隐藏定时器
+        if (hideTimer) {
+            clearTimeout(hideTimer);
+        }
 
-        // 当鼠标移动到屏幕下面1/4部分时显示图标
-        if (mouseY > windowHeight * 3/4) {
+        // 当鼠标移动到右下角特定区域时显示图标
+        if (mouseX > windowWidth - cornerAreaWidth && mouseY > windowHeight - cornerAreaHeight) {
             customBgIcon.classList.add('visible');
         } else {
-            // 鼠标离开下面1/4部分后延迟隐藏图标
-            setTimeout(() => {
-                if (document.elementFromPoint(e.clientX, e.clientY) !== customBgIcon) {
+            // 鼠标离开右下角区域后延迟隐藏图标
+            hideTimer = setTimeout(() => {
+                // 获取当前鼠标位置（更准确的方式）
+                const iconRect = customBgIcon.getBoundingClientRect();
+                const isMouseOverIcon = document.elementFromPoint(e.clientX, e.clientY) === customBgIcon;
+                
+                if (!isMouseOverIcon && customBgIcon.classList.contains('visible')) {
                     customBgIcon.classList.remove('visible');
                 }
-            }, 1000);
+            }, 1000); // 增加延迟时间，使图标停留更久
+        }
+    });
+    
+    // 鼠标悬停在图标上时始终保持可见
+    customBgIcon.addEventListener('mouseenter', () => {
+        customBgIcon.classList.add('visible');
+        if (hideTimer) {
+            clearTimeout(hideTimer);
+        }
+    });
+    
+    // 鼠标离开图标时，根据位置决定是否隐藏
+    customBgIcon.addEventListener('mouseleave', () => {
+        const windowWidth = window.innerWidth;
+        const windowHeight = window.innerHeight;
+        const cornerAreaWidth = 200;
+        const cornerAreaHeight = 200;
+        
+        // 获取鼠标当前位置（使用最新位置而非事件位置）
+        let currentMouseX = 0;
+        let currentMouseY = 0;
+        
+        document.addEventListener('mousemove', updateMousePosition, { once: true });
+        
+        function updateMousePosition(e) {
+            currentMouseX = e.clientX;
+            currentMouseY = e.clientY;
+            
+            // 检查鼠标是否还在右下角区域
+            if (!(currentMouseX > windowWidth - cornerAreaWidth && currentMouseY > windowHeight - cornerAreaHeight)) {
+                hideTimer = setTimeout(() => {
+                    customBgIcon.classList.remove('visible');
+                }, 300);
+            }
         }
     });
 
@@ -352,15 +400,7 @@ document.addEventListener("DOMContentLoaded", () => {
         updateCountdown(new Date());
     });
 
-    // 双击背景弹出加油模态框
-    document.querySelector('.overlay').addEventListener('dblclick', function() {
-        const modal = document.getElementById('cheerModal');
-        modal.classList.add('active');
-        // 3秒后自动关闭
-        setTimeout(() => {
-            modal.classList.remove('active');
-        }, 3000);
-    });
+    // 已在document双击事件中实现加油消息功能
   document.addEventListener('dblclick', function() {
       const currentExam = exams[currentExamIndex];
       const cheerMessage = document.getElementById('cheerMessage');
