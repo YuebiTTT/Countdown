@@ -1,3 +1,163 @@
+
+// 自定义背景相关功能
+function initCustomBackground() {
+    const customBgIcon = document.getElementById('customBgIcon');
+    const customBgModal = document.getElementById('customBgModal');
+    const closeBtn = document.querySelector('.close-btn');
+    const applyBgBtn = document.getElementById('applyBgBtn');
+    const bgImageUrlInput = document.getElementById('bgImageUrl');
+    const presetImages = document.querySelectorAll('.image-grid img');
+    const backgroundContainer = document.querySelector('.background-container');
+
+    // 检查本地存储中是否有保存的背景图片
+    const savedBgImage = localStorage.getItem('customBackground');
+    if (savedBgImage) {
+        backgroundContainer.style.backgroundImage = `url(${savedBgImage})`;
+    }
+
+    // 鼠标移动检测，显示/隐藏自定义背景图标
+    document.addEventListener('mousemove', (e) => {
+        const windowHeight = window.innerHeight;
+        const mouseY = e.clientY;
+
+        // 当鼠标移动到屏幕下面1/4部分时显示图标
+        if (mouseY > windowHeight * 3/4) {
+            customBgIcon.classList.add('visible');
+        } else {
+            // 鼠标离开下面1/4部分后延迟隐藏图标
+            setTimeout(() => {
+                if (document.elementFromPoint(e.clientX, e.clientY) !== customBgIcon) {
+                    customBgIcon.classList.remove('visible');
+                }
+            }, 1000);
+        }
+    });
+
+    // 点击图标打开弹窗
+    customBgIcon.addEventListener('click', () => {
+        customBgModal.classList.add('active');
+        // 阻止事件冒泡，避免立即隐藏图标
+        event.stopPropagation();
+    });
+
+    // 关闭弹窗函数，添加关闭动画 - 背景和内容动画同时开始
+    function closeModalWithAnimation() {
+        // 先添加closing类来触发关闭动画
+        customBgModal.classList.add('closing');
+        
+        // 内容动画和背景动画现在同时开始
+        // 内容动画持续0.35秒，背景模糊效果持续0.4秒
+        // 500ms确保所有动画都能完整执行
+        setTimeout(() => {
+            customBgModal.classList.remove('active');
+            // 移除closing类，以便下次打开时能正确触发动画
+            setTimeout(() => {
+                customBgModal.classList.remove('closing');
+            }, 50);
+        }, 500); // 匹配更新后的动画持续时间，确保所有动画完整执行
+    }
+
+    // 点击关闭按钮关闭弹窗
+    closeBtn.addEventListener('click', () => {
+        closeModalWithAnimation();
+    });
+
+    // 点击弹窗外部关闭弹窗
+    customBgModal.addEventListener('click', (e) => {
+        if (e.target === customBgModal) {
+            closeModalWithAnimation();
+        }
+    });
+
+    // 应用自定义背景图片
+    applyBgBtn.addEventListener('click', () => {
+        const bgUrl = bgImageUrlInput.value.trim();
+        if (bgUrl) {
+            setBackgroundImage(bgUrl);
+            // 稍微延迟关闭，让用户看到应用成功的反馈
+            setTimeout(() => {
+                closeModalWithAnimation();
+            }, 300);
+        }
+    });
+
+    // 文件上传功能
+    const uploadBtn = document.getElementById('uploadBtn');
+    const bgImageUpload = document.getElementById('bgImageUpload');
+    const fileName = document.getElementById('fileName');
+
+    // 点击上传按钮触发文件选择
+    uploadBtn.addEventListener('click', () => {
+        bgImageUpload.click();
+    });
+
+    // 监听文件选择变化
+    bgImageUpload.addEventListener('change', (e) => {
+        const file = e.target.files[0];
+        if (file) {
+            // 显示选中的文件名
+            fileName.textContent = file.name;
+            
+            // 检查是否为图片文件
+            if (file.type.startsWith('image/')) {
+                const reader = new FileReader();
+                
+                // 文件读取完成后处理
+                reader.onload = (event) => {
+                    const imageUrl = event.target.result; // 这是Data URL格式的图片数据
+                    setBackgroundImage(imageUrl);
+                    
+                    // 稍微延迟关闭，让用户看到上传成功的反馈
+                    setTimeout(() => {
+                        closeModalWithAnimation();
+                    }, 300);
+                };
+                
+                // 以Data URL格式读取文件
+                reader.readAsDataURL(file);
+            } else {
+                alert('请选择图片文件！');
+                fileName.textContent = '';
+            }
+        } else {
+            fileName.textContent = '';
+        }
+    });
+
+    // 选择预设背景图片
+    presetImages.forEach(img => {
+        img.addEventListener('click', () => {
+            const bgUrl = img.getAttribute('data-url');
+            bgImageUrlInput.value = bgUrl;
+            setBackgroundImage(bgUrl);
+            // 稍微延迟关闭，让用户看到选择成功的反馈
+            setTimeout(() => {
+                closeModalWithAnimation();
+            }, 300);
+        });
+    });
+
+    // 按ESC键关闭弹窗
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape' && customBgModal.classList.contains('active')) {
+            closeModalWithAnimation();
+        }
+    });
+
+    // 设置背景图片并保存到本地存储
+    function setBackgroundImage(url) {
+        backgroundContainer.style.backgroundImage = `url(${url})`;
+        localStorage.setItem('customBackground', url);
+        // 更新动态颜色
+        if (!useDynamicColor) {
+            setAutoColor();
+        }
+    }
+}
+
+// 确保DOM加载完成后初始化自定义背景功能
+document.addEventListener('DOMContentLoaded', initCustomBackground);
+
 // 选择启用动态取色功能或自动颜色调整
 const useDynamicColor = true; // 若不需要动态取色，改为 false
 const useLocalTime = true; // 若要使用本地时间，改为 true；否则使用服务器时间

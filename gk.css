@@ -6,7 +6,7 @@
     height: 100vh;
     padding: 50px;
     margin: -50px;
-    background-image: url(/stsr.png); /* 替换为您的背景图片URL */
+    background-image: url(./stsr.png); /* 替换为您的背景图片URL */
     background-size: cover;
     background-position: center;
     z-index: 0;
@@ -106,6 +106,305 @@ footer {
     filter: blur(5px);
     transition: filter 0.3s ease;
 }
+/* 自定义背景图标样式 */
+.custom-bg-icon {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    width: 50px;
+    height: 50px;
+    background-color: rgba(0, 0, 0, 0.5);
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    opacity: 0;
+    transition: opacity 0.3s ease, transform 0.3s ease;
+    z-index: 100;
+}
+
+.custom-bg-icon.visible {
+    opacity: 0.5;
+}
+
+.custom-bg-icon:hover {
+    transform: scale(1.1);
+    background-color: rgba(0, 0, 0, 0.7);
+}
+
+/* 自定义背景弹窗样式 - 暗色系 */
+.custom-bg-modal {
+    opacity: 0;
+    visibility: hidden;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.7);
+    z-index: 1000;
+    justify-content: center;
+    align-items: center;
+    transition: opacity 0.5s cubic-bezier(0.4, 0, 0.2, 1), visibility 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+    backdrop-filter: blur(0px);
+}
+
+.custom-bg-modal.active {
+    opacity: 1;
+    visibility: visible;
+    display: flex;
+    backdrop-filter: blur(4px);
+    transition: opacity 0.5s cubic-bezier(0.4, 0, 0.2, 1), visibility 0.5s cubic-bezier(0.4, 0, 0.2, 1), backdrop-filter 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.custom-bg-modal-content {
+    background-color: #1a1a1a;
+    color: #e0e0e0;
+    border-radius: 10px;
+    width: 90%;
+    max-width: 500px;
+    padding: 20px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6);
+    position: relative;
+    border: 1px solid #333;
+    transform: translateY(30px) scale(0.95);
+    opacity: 0;
+    transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.custom-bg-modal.active .custom-bg-modal-content {
+    transform: translateY(0) scale(1);
+    opacity: 1;
+}
+
+/* 弹窗内元素的交错动画 */
+.custom-bg-modal-content h3 {
+    opacity: 0;
+    transform: translateY(10px);
+    animation: modalFadeIn 0.4s ease forwards 0.2s;
+}
+
+#bgImageUrl {
+    opacity: 0;
+    transform: translateY(10px);
+    animation: modalFadeIn 0.4s ease forwards 0.3s;
+}
+
+.apply-btn {
+    opacity: 0;
+    transform: translateY(10px);
+    animation: modalFadeIn 0.4s ease forwards 0.4s;
+}
+
+.preset-images p {
+    opacity: 0;
+    transform: translateY(10px);
+    animation: modalFadeIn 0.4s ease forwards 0.5s;
+}
+
+.image-grid {
+    opacity: 0;
+    transform: translateY(10px);
+    animation: modalFadeIn 0.4s ease forwards 0.6s;
+}
+
+@keyframes modalFadeIn {
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes modalFadeOut {
+    0% {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+    100% {
+        opacity: 0;
+        transform: translateY(20px) scale(0.97);
+    }
+}
+
+@keyframes contentFadeOut {
+    0% {
+        opacity: 1;
+        transform: translateY(0);
+    }
+    100% {
+        opacity: 0;
+        transform: translateY(5px);
+    }
+}
+
+.custom-bg-modal.closing .custom-bg-modal-content {
+    animation: modalFadeOut 0.35s cubic-bezier(0.25, 0.1, 0.25, 1) forwards 0.15s;
+    transition: none; /* 禁用CSS过渡，使用动画 */
+    /* 确保关闭过程中始终保持居中定位 */
+    position: relative;
+    top: auto;
+    left: auto;
+}
+
+.custom-bg-modal.closing {
+    opacity: 1;
+    visibility: visible;
+    display: flex !important; 
+}
+
+/* 重置打开时的动画 */
+.custom-bg-modal:not(.closing) .custom-bg-modal-content h3,
+.custom-bg-modal:not(.closing) #bgImageUrl,
+.custom-bg-modal:not(.closing) .apply-btn,
+.custom-bg-modal:not(.closing) .preset-images p,
+.custom-bg-modal:not(.closing) .image-grid {
+    animation: modalFadeIn 0.4s ease forwards;
+}
+
+.close-btn {
+    position: absolute;
+    top: 10px;
+    right: 15px;
+    font-size: 28px;
+    font-weight: bold;
+    cursor: pointer;
+    color: #888;
+    transition: color 0.3s ease;
+}
+
+.close-btn:hover {
+    color: #fff;
+}
+
+.custom-bg-modal-content h3 {
+    margin-top: 0;
+    color: #fff;
+    border-bottom: 1px solid #333;
+    padding-bottom: 10px;
+}
+
+.modal-body {
+    margin-top: 20px;
+}
+
+#bgImageUrl {
+    width: 100%;
+    padding: 10px;
+    margin: 10px 0;
+    border: 1px solid #444;
+    border-radius: 4px;
+    box-sizing: border-box;
+    background-color: #2a2a2a;
+    color: #e0e0e0;
+    font-family: inherit;
+}
+
+#bgImageUrl:focus {
+    outline: none;
+    border-color: #0078d4;
+    box-shadow: 0 0 0 2px rgba(0, 120, 212, 0.2);
+}
+
+.apply-btn {
+    background-color: #0078d4;
+    color: white;
+    padding: 10px 15px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    margin: 10px 0;
+    font-weight: bold;
+    transition: background-color 0.3s ease;
+}
+
+.apply-btn:hover {
+    background-color: #106ebe;
+}
+
+.file-upload-container {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin: 15px 0 20px 0;
+    padding: 15px;
+    background-color: rgba(42, 42, 42, 0.5);
+    border-radius: 8px;
+    border: 1px solid #444;
+}
+
+.file-upload-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+.upload-btn {
+    background-color: #0078d4;
+    padding: 8px 16px;
+    font-size: 14px;
+    min-width: 120px;
+    transition: all 0.3s ease;
+}
+
+.upload-btn:hover {
+    background-color: #106ebe;
+    transform: translateY(-1px);
+    box-shadow: 0 2px 8px rgba(0, 120, 212, 0.3);
+}
+
+.file-name {
+    color: #ccc;
+    font-size: 14px;
+    flex-grow: 1;
+    min-width: 200px;
+    word-break: break-all;
+    margin: 0;
+    padding: 8px;
+    background-color: rgba(30, 30, 30, 0.5);
+    border-radius: 4px;
+    border: 1px solid #333;
+}
+
+.file-upload-info {
+    color: #888;
+    font-size: 12px;
+    margin: 5px 0 0 0;
+    font-style: italic;
+}
+
+.preset-images {
+    margin-top: 20px;
+}
+
+.preset-images p {
+    color: #ccc;
+}
+
+.image-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+    margin-top: 10px;
+}
+
+.image-grid img {
+    width: 100%;
+    height: 80px;
+    object-fit: cover;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: transform 0.2s ease, border 0.2s ease;
+    border: 2px solid #333;
+}
+
+.image-grid img:hover {
+    transform: scale(1.05);
+    border: 2px solid #0078d4;
+    box-shadow: 0 0 10px rgba(0, 120, 212, 0.3);
+}
+
 /* 逐行显示动画 */
 .content > * {
     opacity: 0;

@@ -26,5 +26,42 @@
         </footer>
     </div>
     <div id="cheerMessage" class="cheer-message"> </div>
+    <!-- 自定义背景图标 -->
+    <div id="customBgIcon" class="custom-bg-icon">
+        <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" fill="white" viewBox="0 0 24 24">
+            <path d="M19.14,12.94c.04-.3,.06-.61,.06-.94c0-.32-.02-.64-.07-.94l2.03-1.58c.18-.14,.23-.41,.12-.61l-1.92-3.32c-.12-.22-.37-.29-.59-.22l-2.39,.96c-.5-.38-1.03-.7-1.62-.94l-.36-2.54c-.04-.24-.24-.41-.48-.41h-3.84c-.24,0-.43,.17-.47,.41l-.36,2.54c-.59,.24-1.13,.57-1.62,.94l-2.39-.96c-.22-.08-.47,0-.59,.22L2.74,8.87c-.12,.21-.08,.47,.12,.61l2.03,1.58c-.05,.3-.09,.63-.09,.94s.02,.64,.07,.94l-2.03,1.58c-.18,.14-.23,.41-.12,.61l1.92,3.32c.12,.22,.37,.29,.59,.22l2.39-.96c.5,.38,1.03,.7,1.62,.94l.36,2.54c.05,.24,.24,.41,.48,.41h3.84c.24,0,.44-.17,.47-.41l.36-2.54c.59-.24,1.13-.56,1.62-.94l2.39,.96c.22,.08,.47,0,.59-.22l1.92-3.32c.12-.22,.07-.47-.12-.61L19.14,12.94z M12,15.6c-1.98,0-3.6-1.62-3.6-3.6s1.62-3.6,3.6-3.6s3.6,1.62,3.6,3.6S13.98,15.6,12,15.6z"/>
+        </svg>
+    </div>
+
+    <!-- 自定义背景弹窗 -->
+    <div id="customBgModal" class="custom-bg-modal">
+        <div class="custom-bg-modal-content">
+            <span class="close-btn">&times;</span>
+            <h3>自定义背景</h3>
+            <div class="modal-body">
+                <p>输入背景图片URL:</p>
+                <input type="text" id="bgImageUrl" placeholder="https://example.com/image.jpg">
+                <button id="applyBgBtn" class="apply-btn">应用URL</button>
+                <p>或上传本地图片</p>
+                <div class="file-upload-container">
+                    <input type="file" id="bgImageUpload" accept="image/*" style="display: none;">
+                    <div class="file-upload-header">
+                        <button id="uploadBtn" class="apply-btn upload-btn">选择图片上传</button>
+                        <span id="fileName" class="file-name"></span>
+                    </div>
+                    <p class="file-upload-info">支持常见图片格式（JPG、PNG、GIF等）</p>
+                </div>
+                <div class="preset-images">
+                    <p>或直接选择预设背景</p>
+                    <div class="image-grid">
+                        <img src="./stsr.png" alt="城市" data-url="./stsr.png">
+                        <img src="https://images.unsplash.com/photo-1470790376778-a9fbc86d70e2" alt="山脉" data-url="https://images.unsplash.com/photo-1470790376778-a9fbc86d70e2">
+                        <img src="https://images.unsplash.com/photo-1501785888041-af3ef285b470" alt="星空" data-url="https://images.unsplash.com/photo-1501785888041-af3ef285b470">
+                        <img src="https://images.unsplash.com/photo-1493976040374-85c8e12f0c0e" alt="森林" data-url="https://images.unsplash.com/photo-1493976040374-85c8e12f0c0e">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 </body>
 </html>
