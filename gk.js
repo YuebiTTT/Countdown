@@ -2,6 +2,14 @@
 // 检测是否为移动设备（全局变量，所有函数都可访问）
 const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
 
+// 字体大小配置
+const fontSizeSettings = {
+    small: 0.8,
+    medium: 1.0,
+    large: 1.2,
+    'x-large': 1.4
+};
+
 // 自定义背景相关功能
 function initCustomBackground() {
     const customBgIcon = document.getElementById('customBgIcon');
@@ -319,6 +327,65 @@ function initCustomBackground() {
             setAutoColor();
         }
     }
+    
+    // 初始化字体大小设置
+    function initFontSizeSettings() {
+        const fontSizeBtns = document.querySelectorAll('.font-size-btn');
+        const customFontSizeSlider = document.getElementById('customFontSize');
+        const fontSizeValue = document.querySelector('.font-size-value');
+        const contentElement = document.querySelector('.content');
+        
+        // 从本地存储加载保存的字体大小，如果没有则使用默认值
+        const savedFontSize = localStorage.getItem('customFontSize');
+        let currentFontSize = savedFontSize ? parseFloat(savedFontSize) : 1.0;
+        
+        // 设置初始字体大小
+        function setFontSize(size) {
+            // 更新内容元素的字体大小（使用CSS变量或直接设置transform）
+            document.documentElement.style.setProperty('--font-scale', size);
+            
+            // 同时应用transform scale以获得更好的缩放效果
+            contentElement.style.transform = `scale(${size})`;
+            
+            // 更新滑块值
+            customFontSizeSlider.value = size;
+            
+            // 更新显示的字体大小百分比
+            fontSizeValue.textContent = `当前大小: ${Math.round(size * 100)}%`;
+            
+            // 更新活动按钮样式
+            fontSizeBtns.forEach(btn => {
+                if (parseFloat(btn.getAttribute('data-size')) === size) {
+                    btn.classList.add('active');
+                } else {
+                    btn.classList.remove('active');
+                }
+            });
+            
+            // 保存到本地存储
+            localStorage.setItem('customFontSize', size);
+        }
+        
+        // 初始化设置
+        setFontSize(currentFontSize);
+        
+        // 按钮点击事件
+        fontSizeBtns.forEach(btn => {
+            btn.addEventListener('click', () => {
+                const size = parseFloat(btn.getAttribute('data-size'));
+                setFontSize(size);
+            });
+        });
+        
+        // 滑块事件
+        customFontSizeSlider.addEventListener('input', () => {
+            const size = parseFloat(customFontSizeSlider.value);
+            setFontSize(size);
+        });
+    }
+    
+    // 初始化字体大小设置
+    initFontSizeSettings();
 }
 
 // 确保DOM加载完成后初始化自定义背景功能
