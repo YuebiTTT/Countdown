@@ -173,12 +173,24 @@ function initCustomBackground() {
             
             // 检查是否为图片或视频文件
             if (file.type.startsWith('image/') || file.type.startsWith('video/')) {
+                // 获取大小限制开关状态
+                const sizeLimitToggle = document.getElementById('sizeLimitToggle');
+                const sizeLimitEnabled = sizeLimitToggle && sizeLimitToggle.checked;
+                
                 // 检查文件大小（限制为50MB）
                 const maxSize = 50 * 1024 * 1024; // 50MB
-                if (file.size > maxSize) {
-                    alert('文件大小不能超过50MB！请选择较小的文件。');
+                if (sizeLimitEnabled && file.size > maxSize) {
+                    alert('文件大小不能超过50MB！请选择较小的文件，或关闭大小限制开关。');
                     fileName.textContent = '';
                     return;
+                }
+                
+                // 如果禁用了大小限制且文件很大，给用户一个警告
+                if (!sizeLimitEnabled && file.size > maxSize) {
+                    if (!confirm(`警告：您选择的文件大小超过了50MB（${(file.size / (1024 * 1024)).toFixed(2)}MB）。\n大文件可能会导致性能问题。\n确定要继续吗？`)) {
+                        fileName.textContent = '';
+                        return;
+                    }
                 }
                 
                 // 添加上传进度显示
