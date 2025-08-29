@@ -1,4 +1,7 @@
 
+// 检测是否为移动设备（全局变量，所有函数都可访问）
+const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+
 // 自定义背景相关功能
 function initCustomBackground() {
     const customBgIcon = document.getElementById('customBgIcon');
@@ -25,72 +28,79 @@ function initCustomBackground() {
         // 默认使用图片背景
         backgroundContainer.style.backgroundImage = `url(./stsr.png)`;
     }
-
-    // 鼠标移动检测，显示/隐藏自定义背景图标
-    let hideTimer;
-    document.addEventListener('mousemove', (e) => {
-        const windowWidth = window.innerWidth;
-        const windowHeight = window.innerHeight;
-        const mouseX = e.clientX;
-        const mouseY = e.clientY;
-        const cornerAreaWidth = 200; // 右下角区域宽度
-        const cornerAreaHeight = 200; // 右下角区域高度
-        
-        // 清除之前的隐藏定时器
-        if (hideTimer) {
-            clearTimeout(hideTimer);
-        }
-
-        // 当鼠标移动到右下角特定区域时显示图标
-        if (mouseX > windowWidth - cornerAreaWidth && mouseY > windowHeight - cornerAreaHeight) {
-            customBgIcon.classList.add('visible');
-        } else {
-            // 鼠标离开右下角区域后延迟隐藏图标
-            hideTimer = setTimeout(() => {
-                // 获取当前鼠标位置（更准确的方式）
-                const iconRect = customBgIcon.getBoundingClientRect();
-                const isMouseOverIcon = document.elementFromPoint(e.clientX, e.clientY) === customBgIcon;
-                
-                if (!isMouseOverIcon && customBgIcon.classList.contains('visible')) {
-                    customBgIcon.classList.remove('visible');
-                }
-            }, 1000); // 增加延迟时间，使图标停留更久
-        }
-    });
     
-    // 鼠标悬停在图标上时始终保持可见
-    customBgIcon.addEventListener('mouseenter', () => {
+    // 移动设备适配：显示自定义背景图标
+    if (isMobile) {
+        // 对于移动设备，直接显示图标，不隐藏
         customBgIcon.classList.add('visible');
-        if (hideTimer) {
-            clearTimeout(hideTimer);
-        }
-    });
-    
-    // 鼠标离开图标时，根据位置决定是否隐藏
-    customBgIcon.addEventListener('mouseleave', () => {
-        const windowWidth = window.innerWidth;
-        const windowHeight = window.innerHeight;
-        const cornerAreaWidth = 200;
-        const cornerAreaHeight = 200;
-        
-        // 获取鼠标当前位置（使用最新位置而非事件位置）
-        let currentMouseX = 0;
-        let currentMouseY = 0;
-        
-        document.addEventListener('mousemove', updateMousePosition, { once: true });
-        
-        function updateMousePosition(e) {
-            currentMouseX = e.clientX;
-            currentMouseY = e.clientY;
+        customBgIcon.style.opacity = '0.7'; // 在移动设备上图标更明显
+    } else {
+        // 桌面设备的原有鼠标检测逻辑
+        let hideTimer;
+        document.addEventListener('mousemove', (e) => {
+            const windowWidth = window.innerWidth;
+            const windowHeight = window.innerHeight;
+            const mouseX = e.clientX;
+            const mouseY = e.clientY;
+            const cornerAreaWidth = 200; // 右下角区域宽度
+            const cornerAreaHeight = 200; // 右下角区域高度
             
-            // 检查鼠标是否还在右下角区域
-            if (!(currentMouseX > windowWidth - cornerAreaWidth && currentMouseY > windowHeight - cornerAreaHeight)) {
-                hideTimer = setTimeout(() => {
-                    customBgIcon.classList.remove('visible');
-                }, 300);
+            // 清除之前的隐藏定时器
+            if (hideTimer) {
+                clearTimeout(hideTimer);
             }
-        }
-    });
+
+            // 当鼠标移动到右下角特定区域时显示图标
+            if (mouseX > windowWidth - cornerAreaWidth && mouseY > windowHeight - cornerAreaHeight) {
+                customBgIcon.classList.add('visible');
+            } else {
+                // 鼠标离开右下角区域后延迟隐藏图标
+                hideTimer = setTimeout(() => {
+                    // 获取当前鼠标位置（更准确的方式）
+                    const iconRect = customBgIcon.getBoundingClientRect();
+                    const isMouseOverIcon = document.elementFromPoint(e.clientX, e.clientY) === customBgIcon;
+                    
+                    if (!isMouseOverIcon && customBgIcon.classList.contains('visible')) {
+                        customBgIcon.classList.remove('visible');
+                    }
+                }, 1000); // 增加延迟时间，使图标停留更久
+            }
+        });
+        
+        // 鼠标悬停在图标上时始终保持可见
+        customBgIcon.addEventListener('mouseenter', () => {
+            customBgIcon.classList.add('visible');
+            if (hideTimer) {
+                clearTimeout(hideTimer);
+            }
+        });
+        
+        // 鼠标离开图标时，根据位置决定是否隐藏
+        customBgIcon.addEventListener('mouseleave', () => {
+            const windowWidth = window.innerWidth;
+            const windowHeight = window.innerHeight;
+            const cornerAreaWidth = 200;
+            const cornerAreaHeight = 200;
+            
+            // 获取鼠标当前位置（使用最新位置而非事件位置）
+            let currentMouseX = 0;
+            let currentMouseY = 0;
+            
+            document.addEventListener('mousemove', updateMousePosition, { once: true });
+            
+            function updateMousePosition(e) {
+                currentMouseX = e.clientX;
+                currentMouseY = e.clientY;
+                
+                // 检查鼠标是否还在右下角区域
+                if (!(currentMouseX > windowWidth - cornerAreaWidth && currentMouseY > windowHeight - cornerAreaHeight)) {
+                    hideTimer = setTimeout(() => {
+                        customBgIcon.classList.remove('visible');
+                    }, 300);
+                }
+            }
+        });
+    }
 
     // 点击图标打开弹窗
     customBgIcon.addEventListener('click', () => {
@@ -146,17 +156,16 @@ function initCustomBackground() {
     });
 
     // 文件上传功能
-    let uploadBtn = document.getElementById('uploadBtn');
-    let bgImageUpload = document.getElementById('bgImageUpload');
-    let fileName = document.getElementById('fileName');
+    const uploadBtn = document.getElementById('uploadBtn');
+    const fileName = document.getElementById('fileName');
 
     // 点击上传按钮触发文件选择
     uploadBtn.addEventListener('click', () => {
-        bgImageUpload.click();
+        document.getElementById('bgImageUpload').click();
     });
 
     // 监听文件选择变化
-    bgImageUpload.addEventListener('change', (e) => {
+    document.getElementById('bgImageUpload').addEventListener('change', (e) => {
         const file = e.target.files[0];
         if (file) {
             // 显示选中的文件名
@@ -498,7 +507,7 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 
     // 已在document双击事件中实现加油消息功能
-  document.addEventListener('dblclick', function() {
+  function showCheerMessage() {
       const currentExam = exams[currentExamIndex];
       const cheerMessage = document.getElementById('cheerMessage');
       const blurElements = document.querySelectorAll('.blur-target, .background-container');
@@ -517,6 +526,37 @@ document.addEventListener("DOMContentLoaded", () => {
               blurElements.forEach(el => el.classList.remove('blur-background'));
           }, 2000);
       }, 500);
+  }
+  
+  // 桌面端双击事件
+  document.addEventListener('dblclick', showCheerMessage);
+  
+  // 移动端触摸事件支持
+  let touchStartTime = 0;
+  let lastTapTime = 0;
+  const DOUBLE_TAP_THRESHOLD = 300; // 双击时间阈值（毫秒）
+  
+  // 移动端双击或长按显示加油消息
+  document.addEventListener('touchstart', function(e) {
+      const currentTime = new Date().getTime();
+      const tapLength = currentTime - lastTapTime;
+      
+      // 检测双击
+      if (tapLength < DOUBLE_TAP_THRESHOLD && tapLength > 0) {
+          showCheerMessage();
+      }
+      
+      // 记录触摸开始时间用于长按检测
+      touchStartTime = currentTime;
+      lastTapTime = currentTime;
+      
+      // 长按检测
+      setTimeout(() => {
+          const touchEndTime = new Date().getTime();
+          if (touchEndTime - touchStartTime > 500) { // 长按超过500毫秒
+              showCheerMessage();
+          }
+      }, 600);
   });
 });
 
@@ -531,7 +571,28 @@ document.addEventListener('click', function(e) {
   }, 100);
 });
 
+// 添加触摸波纹特效（移动设备）
+document.addEventListener('touchstart', function(e) {
+  // 防止在双击/长按显示加油消息时重复显示波纹
+  const touchTime = new Date().getTime();
+  if (touchTime - lastTapTime > 100) {
+    const touch = e.touches[0];
+    // 创建主波纹
+    createRipple({clientX: touch.clientX, clientY: touch.clientY}, 1);
+    
+    // 创建次级波纹，增加层次感
+    setTimeout(() => {
+      createRipple({clientX: touch.clientX, clientY: touch.clientY}, 0.7, 0.2);
+    }, 100);
+  }
+});
+
 function createRipple(e, scaleFactor, delay = 0) {
+  // 在移动设备上减少波纹效果的复杂度以提升性能
+  if (isMobile) {
+    scaleFactor = 0.8; // 移动设备上波纹更小
+  }
+  
   const ripple = document.createElement('div');
   ripple.classList.add('ripple');
   // 随机大小变化 (80-140px)
@@ -548,7 +609,15 @@ function createRipple(e, scaleFactor, delay = 0) {
   
   // 使用HSL颜色模型创建蓝绿色系渐变 (更准确的颜色控制)
   const hue = Math.random() * 60 + 180; // 180-240 蓝绿色系
-  ripple.style.background = `radial-gradient(circle, hsla(${hue}, 100%, 70%, 0.4) 0%, hsla(${hue}, 100%, 70%, 0.1) 100%)`;
+  
+  if (isMobile) {
+    // 移动设备上使用更简单的颜色，减少性能消耗
+    ripple.style.background = `radial-gradient(circle, hsla(${hue}, 100%, 80%, 0.3) 0%, hsla(${hue}, 100%, 80%, 0.1) 100%)`;
+  } else {
+    // 桌面设备上使用完整效果
+    ripple.style.background = `radial-gradient(circle, hsla(${hue}, 100%, 70%, 0.4) 0%, hsla(${hue}, 100%, 70%, 0.1) 100%)`;
+  }
+  
   document.body.appendChild(ripple);
   
   // 动画结束后移除元素
