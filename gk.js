@@ -8,11 +8,22 @@ function initCustomBackground() {
     const bgImageUrlInput = document.getElementById('bgImageUrl');
     const presetImages = document.querySelectorAll('.image-grid img');
     const backgroundContainer = document.querySelector('.background-container');
+    const backgroundVideo = document.getElementById('backgroundVideo');
+    const presetVideos = document.querySelectorAll('.video-item');
 
-    // 检查本地存储中是否有保存的背景图片
-    const savedBgImage = localStorage.getItem('customBackground');
-    if (savedBgImage) {
-        backgroundContainer.style.backgroundImage = `url(${savedBgImage})`;
+    // 检查本地存储中是否有保存的背景
+    const savedBgType = localStorage.getItem('customBackgroundType');
+    const savedBgUrl = localStorage.getItem('customBackground');
+    
+    if (savedBgUrl) {
+        if (savedBgType === 'video') {
+            setBackgroundVideo(savedBgUrl);
+        } else {
+            setBackgroundImage(savedBgUrl);
+        }
+    } else {
+        // 默认使用图片背景
+        backgroundContainer.style.backgroundImage = `url(./stsr.png)`;
     }
 
     // 鼠标移动检测，显示/隐藏自定义背景图标
@@ -117,11 +128,16 @@ function initCustomBackground() {
         }
     });
 
-    // 应用自定义背景图片
+    // 应用自定义背景
     applyBgBtn.addEventListener('click', () => {
         const bgUrl = bgImageUrlInput.value.trim();
         if (bgUrl) {
-            setBackgroundImage(bgUrl);
+            // 检查URL是否指向视频文件
+            if (bgUrl.match(/\.(mp4|webm|ogg|mov)$/i)) {
+                setBackgroundVideo(bgUrl);
+            } else {
+                setBackgroundImage(bgUrl);
+            }
             // 稍微延迟关闭，让用户看到应用成功的反馈
             setTimeout(() => {
                 closeModalWithAnimation();
@@ -130,9 +146,9 @@ function initCustomBackground() {
     });
 
     // 文件上传功能
-    const uploadBtn = document.getElementById('uploadBtn');
-    const bgImageUpload = document.getElementById('bgImageUpload');
-    const fileName = document.getElementById('fileName');
+    let uploadBtn = document.getElementById('uploadBtn');
+    let bgImageUpload = document.getElementById('bgImageUpload');
+    let fileName = document.getElementById('fileName');
 
     // 点击上传按钮触发文件选择
     uploadBtn.addEventListener('click', () => {
@@ -146,25 +162,70 @@ function initCustomBackground() {
             // 显示选中的文件名
             fileName.textContent = file.name;
             
-            // 检查是否为图片文件
-            if (file.type.startsWith('image/')) {
+            // 检查是否为图片或视频文件
+            if (file.type.startsWith('image/') || file.type.startsWith('video/')) {
+                // 检查文件大小（限制为50MB）
+                const maxSize = 50 * 1024 * 1024; // 50MB
+                if (file.size > maxSize) {
+                    alert('文件大小不能超过50MB！请选择较小的文件。');
+                    fileName.textContent = '';
+                    return;
+                }
+                
+                // 添加上传进度显示
+                const progressContainer = document.createElement('div');
+                progressContainer.className = 'upload-progress';
+                progressContainer.innerHTML = '<div class="progress-bar"><div class="progress-fill"></div></div><span class="progress-text">0%</span>';
+                
+                // 找到文件上传头部后插入进度条
+                const fileUploadHeader = document.querySelector('.file-upload-header');
+                fileUploadHeader.parentNode.insertBefore(progressContainer, fileUploadHeader.nextSibling);
+                
+                const progressFill = progressContainer.querySelector('.progress-fill');
+                const progressText = progressContainer.querySelector('.progress-text');
+                
                 const reader = new FileReader();
+                
+                // 上传进度事件
+                reader.onprogress = (event) => {
+                    if (event.lengthComputable) {
+                        const percent = Math.round((event.loaded / event.total) * 100);
+                        progressFill.style.width = percent + '%';
+                        progressText.textContent = percent + '%';
+                    }
+                };
                 
                 // 文件读取完成后处理
                 reader.onload = (event) => {
-                    const imageUrl = event.target.result; // 这是Data URL格式的图片数据
-                    setBackgroundImage(imageUrl);
+                    const mediaUrl = event.target.result; // 这是Data URL格式的数据
                     
-                    // 稍微延迟关闭，让用户看到上传成功的反馈
+                    if (file.type.startsWith('video/')) {
+                        setBackgroundVideo(mediaUrl);
+                    } else {
+                        setBackgroundImage(mediaUrl);
+                    }
+                    
+                    // 移除进度条
                     setTimeout(() => {
+                        if (progressContainer && progressContainer.parentNode) {
+                            progressContainer.parentNode.removeChild(progressContainer);
+                        }
                         closeModalWithAnimation();
                     }, 300);
+                };
+                
+                // 处理读取错误
+                reader.onerror = () => {
+                    alert('文件读取失败，请重试！');
+                    if (progressContainer && progressContainer.parentNode) {
+                        progressContainer.parentNode.removeChild(progressContainer);
+                    }
                 };
                 
                 // 以Data URL格式读取文件
                 reader.readAsDataURL(file);
             } else {
-                alert('请选择图片文件！');
+                alert('请选择图片或视频文件！');
                 fileName.textContent = '';
             }
         } else {
@@ -184,6 +245,19 @@ function initCustomBackground() {
             }, 300);
         });
     });
+    
+    // 选择预设视频背景
+    presetVideos.forEach(videoItem => {
+        videoItem.addEventListener('click', () => {
+            const videoUrl = videoItem.querySelector('.video-url').value;
+            bgImageUrlInput.value = videoUrl;
+            setBackgroundVideo(videoUrl);
+            // 稍微延迟关闭，让用户看到选择成功的反馈
+            setTimeout(() => {
+                closeModalWithAnimation();
+            }, 300);
+        });
+    });
 
     // 按ESC键关闭弹窗
     document.addEventListener('keydown', (e) => {
@@ -194,8 +268,31 @@ function initCustomBackground() {
 
     // 设置背景图片并保存到本地存储
     function setBackgroundImage(url) {
+        // 隐藏视频，显示图片
+        backgroundVideo.style.display = 'none';
         backgroundContainer.style.backgroundImage = `url(${url})`;
+        
+        // 保存到本地存储
         localStorage.setItem('customBackground', url);
+        localStorage.setItem('customBackgroundType', 'image');
+        
+        // 更新动态颜色
+        if (!useDynamicColor) {
+            setAutoColor();
+        }
+    }
+    
+    // 设置背景视频并保存到本地存储
+    function setBackgroundVideo(url) {
+        // 显示视频，隐藏图片
+        backgroundContainer.style.backgroundImage = 'none';
+        backgroundVideo.src = url;
+        backgroundVideo.style.display = 'block';
+        
+        // 保存到本地存储
+        localStorage.setItem('customBackground', url);
+        localStorage.setItem('customBackgroundType', 'video');
+        
         // 更新动态颜色
         if (!useDynamicColor) {
             setAutoColor();

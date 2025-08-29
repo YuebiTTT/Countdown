@@ -7,7 +7,10 @@
 <script src="gk.js"></script>
 </head>
 <body>
-    <div class="background-container"></div>
+    <div class="background-container">
+        <!-- 视频背景元素 -->
+        <video id="backgroundVideo" class="background-video" autoplay muted loop playsinline></video>
+    </div>
     <div class="overlay"></div> <!-- 浅灰色遮罩层 -->
     <div class="blur-target">
         <div class="content">
@@ -44,15 +47,17 @@
                 <button id="applyBgBtn" class="apply-btn">应用URL</button>
                 <p>或上传本地图片</p>
                 <div class="file-upload-container">
-                    <input type="file" id="bgImageUpload" accept="image/*" style="display: none;">
+                    <input type="file" id="bgImageUpload" accept="image/*,video/mp4,video/webm,video/ogg" style="display: none;">
                     <div class="file-upload-header">
-                        <button id="uploadBtn" class="apply-btn upload-btn">选择图片上传</button>
+                        <button id="uploadBtn" class="apply-btn upload-btn">选择图片或视频上传</button>
                         <span id="fileName" class="file-name"></span>
                     </div>
                     <p class="file-upload-info">支持常见图片格式（JPG、PNG、GIF等）</p>
+                <p>支持视频格式（MP4、WebM、OGG等）</p>
                 </div>
+                
                 <div class="preset-images">
-                    <p>或直接选择预设背景</p>
+                    <p>或直接选择预设图片背景</p>
                     <div class="image-grid">
                         <img src="./stsr.png" alt="城市" data-url="./stsr.png">
                         <img src="https://images.unsplash.com/photo-1470790376778-a9fbc86d70e2" alt="山脉" data-url="https://images.unsplash.com/photo-1470790376778-a9fbc86d70e2">
