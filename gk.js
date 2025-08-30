@@ -11,6 +11,9 @@ let customEndTime = null;
 let backgroundContainer;
 let backgroundVideo;
 
+// 效果控制变量
+let rippleEnabled = true; // 默认启用波纹效果
+
 // 字体大小配置
 const fontSizeSettings = {
     small: 0.8,
@@ -1169,8 +1172,10 @@ document.addEventListener('DOMContentLoaded', () => {
         }, 600);
     });
     
-    // 点击波纹特效
-    document.addEventListener('click', function(e) {
+    // 点击波纹特效处理函数
+    function handleClickRipple(e) {
+      if (!rippleEnabled) return;
+      
       // 创建主波纹
       createRipple(e, 1);
       
@@ -1178,10 +1183,12 @@ document.addEventListener('DOMContentLoaded', () => {
       setTimeout(() => {
         createRipple(e, 0.7, 0.2);
       }, 100);
-    });
+    }
     
-    // 触摸波纹特效（移动设备）
-    document.addEventListener('touchstart', function(e) {
+    // 触摸波纹特效处理函数（移动设备）
+    function handleTouchRipple(e) {
+      if (!rippleEnabled) return;
+      
       const touch = e.touches[0];
       // 创建主波纹
       createRipple({clientX: touch.clientX, clientY: touch.clientY}, 1);
@@ -1190,7 +1197,28 @@ document.addEventListener('DOMContentLoaded', () => {
       setTimeout(() => {
         createRipple({clientX: touch.clientX, clientY: touch.clientY}, 0.7, 0.2);
       }, 100);
-    });
+    }
+    
+    // 添加点击波纹特效事件监听
+    document.addEventListener('click', handleClickRipple);
+    document.addEventListener('touchstart', handleTouchRipple);
+    
+    // 初始化点击波纹开关
+    const enableRippleToggle = document.getElementById('enableRippleToggle');
+    if (enableRippleToggle) {
+      // 从本地存储加载保存的设置，如果没有则使用默认值
+      const savedRippleSetting = localStorage.getItem('enableRipple');
+      if (savedRippleSetting !== null) {
+        rippleEnabled = savedRippleSetting === 'true';
+        enableRippleToggle.checked = rippleEnabled;
+      }
+      
+      // 添加开关的change事件监听
+      enableRippleToggle.addEventListener('change', function() {
+        rippleEnabled = this.checked;
+        localStorage.setItem('enableRipple', rippleEnabled.toString());
+      });
+    }
     
     // 双击背景显示加油鼓励动画和文字效果
     document.addEventListener('dblclick', function(e) {
@@ -1209,27 +1237,31 @@ document.addEventListener('DOMContentLoaded', () => {
     let parallaxEnabled = true; // 默认启用视差效果
     
     // 获取开关元素
-    const disableParallaxToggle = document.getElementById('disableParallaxToggle');
+    const enableParallaxToggle = document.getElementById('disableParallaxToggle');
     
     // 从本地存储读取设置
-    const storedValue = localStorage.getItem('parallaxDisabled');
-    // 总是默认启用视差效果，忽略之前的设置
-    parallaxEnabled = true;
-    disableParallaxToggle.checked = false;
-    // 清除之前的设置
-    localStorage.setItem('parallaxDisabled', 'false');
+    const storedValue = localStorage.getItem('parallaxEnabled');
+    // 检查是否有保存的设置，如果没有则默认启用
+    if (storedValue !== null) {
+        parallaxEnabled = storedValue === 'true';
+        enableParallaxToggle.checked = parallaxEnabled;
+    } else {
+        // 默认启用视差效果
+        parallaxEnabled = true;
+        enableParallaxToggle.checked = true;
+        localStorage.setItem('parallaxEnabled', 'true');
+    }
     
     // 添加开关事件监听
-    disableParallaxToggle.addEventListener('change', function() {
-        // 当开关被选中时，表示禁用视差效果
-        const isDisabled = this.checked;
-        parallaxEnabled = !isDisabled;
+    enableParallaxToggle.addEventListener('change', function() {
+        // 当开关被选中时，表示启用视差效果
+        parallaxEnabled = this.checked;
         
         // 保存设置到本地存储
-        localStorage.setItem('parallaxDisabled', isDisabled.toString());
+        localStorage.setItem('parallaxEnabled', parallaxEnabled.toString());
         
         // 如果禁用视差，重置背景位置
-        if (isDisabled) {
+        if (!parallaxEnabled) {
             backgroundContainer.style.transform = 'translate(0px, 0px)';
         }
     });
