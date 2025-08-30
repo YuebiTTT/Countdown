@@ -1079,4 +1079,49 @@ document.addEventListener('DOMContentLoaded', () => {
     
     // 初始化自定义倒计时功能
     initCustomCountdown();
+    
+    // 添加背景随鼠标轻微移动的视差效果
+    const backgroundContainer = document.querySelector('.background-container');
+    const maxMove = 5; // 最大移动像素
+    
+    document.addEventListener('mousemove', (e) => {
+        // 获取鼠标在视口中的位置
+        const windowWidth = window.innerWidth;
+        const windowHeight = window.innerHeight;
+        
+        // 计算鼠标位置相对于窗口中心的偏移量 (范围: -1 到 1)
+        const xOffset = (e.clientX / windowWidth - 0.5) * 2;
+        const yOffset = (e.clientY / windowHeight - 0.5) * 2;
+        
+        // 计算背景移动的实际像素值
+        const translateX = xOffset * maxMove;
+        const translateY = yOffset * maxMove;
+        
+        // 应用变换效果，使用transform属性以获得更好的性能
+        backgroundContainer.style.transform = `translate(${translateX}px, ${translateY}px)`;
+    });
+    
+    // 为移动设备添加触摸移动支持
+    document.addEventListener('touchmove', (e) => {
+        if (e.touches.length > 0) {
+            const touch = e.touches[0];
+            const windowWidth = window.innerWidth;
+            const windowHeight = window.innerHeight;
+            
+            // 计算触摸位置相对于窗口中心的偏移量
+            const xOffset = (touch.clientX / windowWidth - 0.5) * 2;
+            const yOffset = (touch.clientY / windowHeight - 0.5) * 2;
+            
+            // 计算背景移动的实际像素值
+            const translateX = xOffset * maxMove;
+            const translateY = yOffset * maxMove;
+            
+            // 应用变换效果
+            backgroundContainer.style.transform = `translate(${translateX}px, ${translateY}px)`;
+        }
+        e.preventDefault(); // 阻止页面滚动
+    }, { passive: false });
+    
+    // 为背景容器添加平滑过渡效果
+    backgroundContainer.style.transition = 'transform 0.15s ease-out';
 });
