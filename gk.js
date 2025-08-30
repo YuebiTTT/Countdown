@@ -1243,12 +1243,17 @@ document.addEventListener('DOMContentLoaded', () => {
     const parallaxValueDisplay = document.getElementById('parallaxValue');
     const parallaxIntensityControl = document.getElementById('parallaxIntensityControl');
     
-    // 函数：根据视差状态显示或隐藏强度控制
+    // 函数：根据视差状态显示或隐藏强度控制（带动画效果）
     function toggleParallaxControlVisibility() {
+        // 确保添加了控制过渡动画类
+        parallaxIntensityControl.classList.add('control-transition');
+        
         if (parallaxEnabled) {
-            parallaxIntensityControl.style.display = 'block';
+            // 显示视差强度控制（带动画）
+            parallaxIntensityControl.classList.remove('hidden');
         } else {
-            parallaxIntensityControl.style.display = 'none';
+            // 隐藏视差强度控制（带动画）
+            parallaxIntensityControl.classList.add('hidden');
         }
     }
     
