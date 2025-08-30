@@ -312,7 +312,7 @@ footer {
     width: 90%;
     max-width: 650px;
     max-height: 85vh;
-    overflow: hidden;
+    overflow-y: auto;
     box-shadow: 0 15px 40px rgba(0, 0, 0, 0.6);
     border: 1px solid rgba(255, 255, 255, 0.08);
     animation: slideIn 0.4s ease;
@@ -411,7 +411,7 @@ footer {
 .settings-tabs + .tab-content {
     position: relative;
     min-height: calc(85vh - 70px);
-    overflow: hidden;
+    overflow-y: auto;
 }
 
 /* 标签页内容 */
@@ -813,7 +813,7 @@ input:focus + .switch-slider {
 /* 预设背景网格 */
 .preset-grid {
     display: grid;
-    grid-template-columns: repeat(2, 1fr);
+    grid-template-columns: repeat(4, 1fr);
     gap: 16px;
     margin-top: 16px;
 }
