@@ -184,18 +184,29 @@
                         <div class="setting-section">
                             <h3>交互效果</h3>
                             <div class="toggle-setting">
+                                <span>点击波纹效果</span>
+                                <label class="switch">
+                                    <input type="checkbox" id="enableRippleToggle" checked>
+                                    <span class="switch-slider"></span>
+                                </label>
+                            </div>
+                            
+                            <div class="toggle-setting">
                                 <span>背景视差效果</span>
                                 <label class="switch">
                                     <input type="checkbox" id="disableParallaxToggle" checked>
                                     <span class="switch-slider"></span>
                                 </label>
                             </div>
-                            <div class="toggle-setting">
-                                <span>点击波纹效果</span>
-                                <label class="switch">
-                                    <input type="checkbox" id="enableRippleToggle" checked>
-                                    <span class="switch-slider"></span>
-                                </label>
+                            
+                            <div class="slider-control" id="parallaxIntensityControl">
+                                <span>视差强度</span>
+                                <input type="range" id="parallaxIntensity" min="5" max="30" step="1" value="15">
+                                <div class="size-indicators">
+                                    <span>弱</span>
+                                    <span id="parallaxValue" class="current-size">当前: 15px</span>
+                                    <span>强</span>
+                                </div>
                             </div>
                         </div>
                     </div>

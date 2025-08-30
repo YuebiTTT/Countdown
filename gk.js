@@ -1233,17 +1233,32 @@ document.addEventListener('DOMContentLoaded', () => {
     
     // 添加背景随鼠标轻微移动的视差效果
     const backgroundContainer = document.querySelector('.background-container');
-    const maxMove = 15; // 增加移动距离，使效果更明显
+    let maxMove = 15; // 视差移动最大距离，使效果更明显
     let parallaxEnabled = true; // 默认启用视差效果
     
     // 获取开关元素
     const enableParallaxToggle = document.getElementById('disableParallaxToggle');
+    // 获取视差强度滑块和控制容器
+    const parallaxIntensitySlider = document.getElementById('parallaxIntensity');
+    const parallaxValueDisplay = document.getElementById('parallaxValue');
+    const parallaxIntensityControl = document.getElementById('parallaxIntensityControl');
+    
+    // 函数：根据视差状态显示或隐藏强度控制
+    function toggleParallaxControlVisibility() {
+        if (parallaxEnabled) {
+            parallaxIntensityControl.style.display = 'block';
+        } else {
+            parallaxIntensityControl.style.display = 'none';
+        }
+    }
     
     // 从本地存储读取设置
-    const storedValue = localStorage.getItem('parallaxEnabled');
+    const storedEnabledValue = localStorage.getItem('parallaxEnabled');
+    const storedIntensityValue = localStorage.getItem('parallaxIntensity');
+    
     // 检查是否有保存的设置，如果没有则默认启用
-    if (storedValue !== null) {
-        parallaxEnabled = storedValue === 'true';
+    if (storedEnabledValue !== null) {
+        parallaxEnabled = storedEnabledValue === 'true';
         enableParallaxToggle.checked = parallaxEnabled;
     } else {
         // 默认启用视差效果
@@ -1251,6 +1266,30 @@ document.addEventListener('DOMContentLoaded', () => {
         enableParallaxToggle.checked = true;
         localStorage.setItem('parallaxEnabled', 'true');
     }
+    
+    // 检查是否有保存的视差强度设置
+    if (storedIntensityValue !== null) {
+        maxMove = parseInt(storedIntensityValue);
+        parallaxIntensitySlider.value = maxMove;
+    } else {
+        // 默认视差强度
+        maxMove = 15;
+        parallaxIntensitySlider.value = 15;
+        localStorage.setItem('parallaxIntensity', '15');
+    }
+    
+    // 更新视差强度显示值
+    parallaxValueDisplay.textContent = `当前: ${maxMove}px`;
+    
+    // 初始化时根据视差状态显示或隐藏强度控制
+    toggleParallaxControlVisibility();
+    
+    // 添加视差强度滑块事件监听
+    parallaxIntensitySlider.addEventListener('input', function() {
+        maxMove = parseInt(this.value);
+        parallaxValueDisplay.textContent = `当前: ${maxMove}px`;
+        localStorage.setItem('parallaxIntensity', maxMove.toString());
+    });
     
     // 添加开关事件监听
     enableParallaxToggle.addEventListener('change', function() {
@@ -1264,6 +1303,9 @@ document.addEventListener('DOMContentLoaded', () => {
         if (!parallaxEnabled) {
             backgroundContainer.style.transform = 'translate(0px, 0px)';
         }
+        
+        // 根据视差状态显示或隐藏强度控制
+        toggleParallaxControlVisibility();
     });
     
     document.addEventListener('mousemove', (e) => {
