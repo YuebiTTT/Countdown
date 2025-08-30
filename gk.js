@@ -1083,27 +1083,51 @@ document.addEventListener('DOMContentLoaded', () => {
     // 添加背景随鼠标轻微移动的视差效果
     const backgroundContainer = document.querySelector('.background-container');
     const maxMove = 5; // 最大移动像素
+    let parallaxEnabled = true; // 默认启用视差效果
+    
+    // 获取开关元素
+    const disableParallaxToggle = document.getElementById('disableParallaxToggle');
+    
+    // 从本地存储读取设置
+    if (localStorage.getItem('parallaxDisabled') === 'true') {
+        parallaxEnabled = false;
+        disableParallaxToggle.checked = true;
+    }
+    
+    // 添加开关事件监听
+    disableParallaxToggle.addEventListener('change', function() {
+        parallaxEnabled = !this.checked;
+        // 保存设置到本地存储
+        localStorage.setItem('parallaxDisabled', (!parallaxEnabled).toString());
+        
+        // 如果禁用视差，重置背景位置
+        if (!parallaxEnabled) {
+            backgroundContainer.style.transform = 'translate(0px, 0px)';
+        }
+    });
     
     document.addEventListener('mousemove', (e) => {
-        // 获取鼠标在视口中的位置
-        const windowWidth = window.innerWidth;
-        const windowHeight = window.innerHeight;
-        
-        // 计算鼠标位置相对于窗口中心的偏移量 (范围: -1 到 1)
-        const xOffset = (e.clientX / windowWidth - 0.5) * 2;
-        const yOffset = (e.clientY / windowHeight - 0.5) * 2;
-        
-        // 计算背景移动的实际像素值
-        const translateX = xOffset * maxMove;
-        const translateY = yOffset * maxMove;
-        
-        // 应用变换效果，使用transform属性以获得更好的性能
-        backgroundContainer.style.transform = `translate(${translateX}px, ${translateY}px)`;
+        if (parallaxEnabled) {
+            // 获取鼠标在视口中的位置
+            const windowWidth = window.innerWidth;
+            const windowHeight = window.innerHeight;
+            
+            // 计算鼠标位置相对于窗口中心的偏移量 (范围: -1 到 1)
+            const xOffset = (e.clientX / windowWidth - 0.5) * 2;
+            const yOffset = (e.clientY / windowHeight - 0.5) * 2;
+            
+            // 计算背景移动的实际像素值
+            const translateX = xOffset * maxMove;
+            const translateY = yOffset * maxMove;
+            
+            // 应用变换效果，使用transform属性以获得更好的性能
+            backgroundContainer.style.transform = `translate(${translateX}px, ${translateY}px)`;
+        }
     });
     
     // 为移动设备添加触摸移动支持
     document.addEventListener('touchmove', (e) => {
-        if (e.touches.length > 0) {
+        if (parallaxEnabled && e.touches.length > 0) {
             const touch = e.touches[0];
             const windowWidth = window.innerWidth;
             const windowHeight = window.innerHeight;
@@ -1124,4 +1148,5 @@ document.addEventListener('DOMContentLoaded', () => {
     
     // 为背景容器添加平滑过渡效果
     backgroundContainer.style.transition = 'transform 0.15s ease-out';
+    
 });
