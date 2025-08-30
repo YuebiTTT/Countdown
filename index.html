@@ -29,6 +29,56 @@
         <footer>
             <!--p>本页面由 <a target="_blank" href="https://xingchencloud.top/">叶玖洛</a> 制作，随机一言功能基于 <a target="_blank" href="https://hitokoto.cn/">一言</a> API 实现。Bing每日壁纸背景API由 <a target="_blank" href="https://api.paugram.com/help/bing">保罗</a> 提供。</p-->
         </footer>
+        
+        <!-- 自定义倒计时按钮 -->
+        <div id="customCountdownBtn" class="custom-countdown-btn">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="white" viewBox="0 0 24 24">
+                <path d="M14 10H9v7H7V10H2V8h20v2h-5zm-2-7c4.2 0 7.8 3.6 7.8 7.8 0 4.2-3.6 7.8-7.8 7.8S4.2 15.96 4.2 11.8 7.8 4 12 4m0-2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2z"/>
+            </svg>
+        </div>
+        
+        <!-- 自定义倒计时弹窗 -->
+        <div id="customCountdownModal" class="custom-countdown-modal">
+            <div class="custom-countdown-modal-content">
+                <span class="close-btn">&times;</span>
+                <h3>自定义倒计时</h3>
+                <div class="modal-body">
+                    <div class="countdown-inputs">
+                        <div class="input-group">
+                            <input type="number" id="minutesInput" placeholder="分钟" min="0" max="59">
+                            <span class="input-label">分钟</span>
+                        </div>
+                        <div class="input-group">
+                            <input type="number" id="secondsInput" placeholder="秒" min="0" max="59">
+                            <span class="input-label">秒</span>
+                        </div>
+                    </div>
+                    <button id="startCountdownBtn" class="apply-btn">开始倒计时</button>
+                    <div class="preset-countdowns">
+                        <p>或选择预设时间</p>
+                        <div class="preset-buttons">
+                            <button class="preset-btn" data-minutes="0" data-seconds="30">30秒</button>
+                            <button class="preset-btn" data-minutes="1" data-seconds="0">1分钟</button>
+                            <button class="preset-btn" data-minutes="5" data-seconds="0">5分钟</button>
+                            <button class="preset-btn" data-minutes="10" data-seconds="0">10分钟</button>
+                            <button class="preset-btn" data-minutes="15" data-seconds="0">15分钟</button>
+                            <button class="preset-btn" data-minutes="30" data-seconds="0">30分钟</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 自定义倒计时显示区域 -->
+        <div id="customCountdownDisplay" class="custom-countdown-display">
+            <div class="custom-countdown" id="countdownTextContainer">
+                <span class="countdown-time">
+                    <p><span id="customCountdownMinutes">00</span>分</p>
+                    <p><span id="customCountdownSeconds">00</span>秒</p>
+                </span>
+                <span class="countdown-cancel" style="display: none;">取消</span>
+            </div>
+        </div>
     </div>
     <div id="cheerMessage" class="cheer-message"> </div>
     <!-- 自定义背景图标 -->
