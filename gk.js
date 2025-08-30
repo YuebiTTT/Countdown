@@ -7,6 +7,10 @@ let customCountdownInterval = null;
 let customCountdownActive = false;
 let customEndTime = null;
 
+// 背景相关变量（全局，供setBackgroundImage和setBackgroundVideo函数使用）
+let backgroundContainer;
+let backgroundVideo;
+
 // 字体大小配置
 const fontSizeSettings = {
     small: 0.8,
@@ -15,17 +19,25 @@ const fontSizeSettings = {
     'x-large': 1.4
 };
 
-// 自定义背景相关功能
-function initCustomBackground() {
-    const customBgIcon = document.getElementById('customBgIcon');
-    const customBgModal = document.getElementById('customBgModal');
-    const closeBtn = document.querySelector('.close-btn');
-    const applyBgBtn = document.getElementById('applyBgBtn');
+// 初始化设置功能
+function initSettings() {
+    const settingsBtn = document.getElementById('settingsBtn');
+    const settingsModal = document.getElementById('settingsModal');
+    const modalClose = document.querySelector('.close-btn');
     const bgImageUrlInput = document.getElementById('bgImageUrl');
-    const presetImages = document.querySelectorAll('.image-grid img');
-    const backgroundContainer = document.querySelector('.background-container');
-    const backgroundVideo = document.getElementById('backgroundVideo');
-    const presetVideos = document.querySelectorAll('.video-item');
+    const presetImages = document.querySelectorAll('.preset-grid .preset-item');
+    const presetVideos = document.querySelectorAll('.preset-videos .preset-item');
+    const clearBgBtn = document.getElementById('clearBgBtn');
+    const applyBgBtn = document.getElementById('applyBgBtn');
+    const customCountdownBtn = document.getElementById('customCountdownBtn');
+    
+    // 初始化背景元素（使用全局变量）
+    backgroundContainer = document.querySelector('.background-container');
+    backgroundVideo = document.getElementById('backgroundVideo');
+    
+    // 标签页相关元素
+    const tabButtons = document.querySelectorAll('.tab-btn');
+    const tabContents = document.querySelectorAll('.tab-pane');
 
     // 检查本地存储中是否有保存的背景
     const savedBgType = localStorage.getItem('customBackgroundType');
@@ -42,12 +54,12 @@ function initCustomBackground() {
         backgroundContainer.style.backgroundImage = `url(./stsr.png)`;
     }
     
-    // 移动设备适配：显示自定义背景图标
+    // 移动设备适配：显示设置按钮
     if (isMobile) {
-        // 对于移动设备，直接显示图标，不隐藏
-        customBgIcon.classList.add('visible');
+        // 对于移动设备，直接显示按钮，不隐藏
+        settingsBtn.classList.add('visible');
         customCountdownBtn.classList.add('visible');
-        customBgIcon.style.opacity = '0.7'; // 在移动设备上图标更明显
+        settingsBtn.style.opacity = '0.7'; // 在移动设备上按钮更明显
     } else {
         // 桌面设备的原有鼠标检测逻辑
         let hideTimer;
@@ -64,34 +76,34 @@ function initCustomBackground() {
                 clearTimeout(hideTimer);
             }
 
-            // 当鼠标移动到右下角特定区域时显示图标
+            // 当鼠标移动到右下角特定区域时显示按钮
             if (mouseX > windowWidth - cornerAreaWidth && mouseY > windowHeight - cornerAreaHeight) {
-                customBgIcon.classList.add('visible');
+                settingsBtn.classList.add('visible');
                 customCountdownBtn.classList.add('visible');
             } else {
-                // 鼠标离开右下角区域后延迟隐藏图标
+                // 鼠标离开右下角区域后延迟隐藏按钮
                 hideTimer = setTimeout(() => {
                     // 获取当前鼠标位置（更准确的方式）
-                    const iconRect = customBgIcon.getBoundingClientRect();
+                    const iconRect = settingsBtn.getBoundingClientRect();
                     const countdownBtnRect = customCountdownBtn.getBoundingClientRect();
                     
-                    const isMouseOverIcon = document.elementFromPoint(e.clientX, e.clientY) === customBgIcon;
+                    const isMouseOverIcon = document.elementFromPoint(e.clientX, e.clientY) === settingsBtn;
                     const isMouseOverCountdownBtn = document.elementFromPoint(e.clientX, e.clientY) === customCountdownBtn;
                     
-                    if (!isMouseOverIcon && customBgIcon.classList.contains('visible')) {
-                        customBgIcon.classList.remove('visible');
+                    if (!isMouseOverIcon && settingsBtn.classList.contains('visible')) {
+                        settingsBtn.classList.remove('visible');
                     }
                     
                     if (!isMouseOverCountdownBtn && customCountdownBtn.classList.contains('visible')) {
                         customCountdownBtn.classList.remove('visible');
                     }
-                }, 1000); // 增加延迟时间，使图标停留更久
+                }, 1000); // 增加延迟时间，使按钮停留更久
             }
         });
         
-        // 鼠标悬停在图标上时始终保持可见
-        customBgIcon.addEventListener('mouseenter', () => {
-            customBgIcon.classList.add('visible');
+        // 鼠标悬停在按钮上时始终保持可见
+        settingsBtn.addEventListener('mouseenter', () => {
+            settingsBtn.classList.add('visible');
             if (hideTimer) {
                 clearTimeout(hideTimer);
             }
@@ -104,8 +116,8 @@ function initCustomBackground() {
             }
         });
         
-        // 鼠标离开图标时，根据位置决定是否隐藏
-        customBgIcon.addEventListener('mouseleave', () => {
+        // 鼠标离开按钮时，根据位置决定是否隐藏
+        settingsBtn.addEventListener('mouseleave', () => {
             const windowWidth = window.innerWidth;
             const windowHeight = window.innerHeight;
             const cornerAreaWidth = 200;
@@ -124,7 +136,7 @@ function initCustomBackground() {
                 // 检查鼠标是否还在右下角区域
                 if (!(currentMouseX > windowWidth - cornerAreaWidth && currentMouseY > windowHeight - cornerAreaHeight)) {
                     hideTimer = setTimeout(() => {
-                        customBgIcon.classList.remove('visible');
+                        settingsBtn.classList.remove('visible');
                     }, 300);
                 }
             }
@@ -156,39 +168,27 @@ function initCustomBackground() {
         });
     }
 
-    // 点击图标打开弹窗
-    customBgIcon.addEventListener('click', () => {
-        customBgModal.classList.add('active');
-        // 阻止事件冒泡，避免立即隐藏图标
+    // 点击按钮打开设置弹窗
+    settingsBtn.addEventListener('click', () => {
+        settingsModal.style.display = 'flex';
+        document.body.style.overflow = 'hidden'; // 防止背景滚动
+        // 阻止事件冒泡，避免立即隐藏按钮
         event.stopPropagation();
     });
 
-    // 关闭弹窗函数，添加关闭动画 - 背景和内容动画同时开始
-    function closeModalWithAnimation() {
-        // 先添加closing类来触发关闭动画
-        customBgModal.classList.add('closing');
-        
-        // 内容动画和背景动画现在同时开始
-        // 内容动画持续0.35秒，背景模糊效果持续0.4秒
-        // 500ms确保所有动画都能完整执行
-        setTimeout(() => {
-            customBgModal.classList.remove('active');
-            // 移除closing类，以便下次打开时能正确触发动画
-            setTimeout(() => {
-                customBgModal.classList.remove('closing');
-            }, 50);
-        }, 500); // 匹配更新后的动画持续时间，确保所有动画完整执行
+    // 关闭设置弹窗
+    function closeSettingsModal() {
+        settingsModal.style.display = 'none';
+        document.body.style.overflow = ''; // 恢复背景滚动
     }
 
     // 点击关闭按钮关闭弹窗
-    closeBtn.addEventListener('click', () => {
-        closeModalWithAnimation();
-    });
+    modalClose.addEventListener('click', closeSettingsModal);
 
     // 点击弹窗外部关闭弹窗
-    customBgModal.addEventListener('click', (e) => {
-        if (e.target === customBgModal) {
-            closeModalWithAnimation();
+    settingsModal.addEventListener('click', (e) => {
+        if (e.target === settingsModal) {
+            closeSettingsModal();
         }
     });
 
@@ -204,9 +204,33 @@ function initCustomBackground() {
             }
             // 稍微延迟关闭，让用户看到应用成功的反馈
             setTimeout(() => {
-                closeModalWithAnimation();
+                closeSettingsModal();
             }, 300);
         }
+    });
+
+    // 清除背景
+    clearBgBtn.addEventListener('click', () => {
+        // 清除本地存储
+        localStorage.removeItem('customBackground');
+        localStorage.removeItem('customBackgroundType');
+        
+        // 恢复默认背景
+        backgroundVideo.style.display = 'none';
+        backgroundContainer.style.backgroundImage = `url(./stsr.png)`;
+        
+        // 清空输入框
+        bgImageUrlInput.value = '';
+        
+        // 更新动态颜色
+        if (!useDynamicColor) {
+            setAutoColor();
+        }
+        
+        // 稍微延迟关闭，让用户看到应用成功的反馈
+        setTimeout(() => {
+            closeSettingsModal();
+        }, 300);
     });
 
     // 文件上传功能
@@ -215,7 +239,10 @@ function initCustomBackground() {
 
     // 点击上传按钮触发文件选择
     uploadBtn.addEventListener('click', () => {
-        document.getElementById('bgImageUpload').click();
+        const fileInput = document.getElementById('bgImageUpload');
+        fileInput.click();
+        // 重置文件输入，以便可以重复选择同一个文件
+        fileInput.value = '';
     });
 
     // 监听文件选择变化
@@ -253,11 +280,16 @@ function initCustomBackground() {
                 progressContainer.innerHTML = '<div class="progress-bar"><div class="progress-fill"></div></div><span class="progress-text">0%</span>';
                 
                 // 找到文件上传头部后插入进度条
-                const fileUploadHeader = document.querySelector('.file-upload-header');
-                fileUploadHeader.parentNode.insertBefore(progressContainer, fileUploadHeader.nextSibling);
+                const fileUploadWrapper = document.querySelector('.file-upload-wrapper');
+                if (fileUploadWrapper) {
+                    fileUploadWrapper.appendChild(progressContainer);
+                }
                 
                 const progressFill = progressContainer.querySelector('.progress-fill');
                 const progressText = progressContainer.querySelector('.progress-text');
+                
+                // 确保进度条样式正确
+                if (progressFill) progressFill.style.width = '0%';
                 
                 const reader = new FileReader();
                 
@@ -265,32 +297,41 @@ function initCustomBackground() {
                 reader.onprogress = (event) => {
                     if (event.lengthComputable) {
                         const percent = Math.round((event.loaded / event.total) * 100);
-                        progressFill.style.width = percent + '%';
-                        progressText.textContent = percent + '%';
+                        if (progressFill) progressFill.style.width = percent + '%';
+                        if (progressText) progressText.textContent = percent + '%';
                     }
                 };
                 
                 // 文件读取完成后处理
                 reader.onload = (event) => {
-                    const mediaUrl = event.target.result; // 这是Data URL格式的数据
-                    
-                    if (file.type.startsWith('video/')) {
-                        setBackgroundVideo(mediaUrl);
-                    } else {
-                        setBackgroundImage(mediaUrl);
-                    }
-                    
-                    // 移除进度条
-                    setTimeout(() => {
+                    try {
+                        const mediaUrl = event.target.result; // 这是Data URL格式的数据
+                        
+                        if (file.type.startsWith('video/')) {
+                            setBackgroundVideo(mediaUrl);
+                        } else {
+                            setBackgroundImage(mediaUrl);
+                        }
+                        
+                        // 移除进度条
+                        setTimeout(() => {
+                            if (progressContainer && progressContainer.parentNode) {
+                                progressContainer.parentNode.removeChild(progressContainer);
+                            }
+                            closeSettingsModal();
+                        }, 300);
+                    } catch (error) {
+                        console.error('设置背景时出错:', error);
+                        alert('设置背景时出错，请重试！');
                         if (progressContainer && progressContainer.parentNode) {
                             progressContainer.parentNode.removeChild(progressContainer);
                         }
-                        closeModalWithAnimation();
-                    }, 300);
+                    }
                 };
                 
                 // 处理读取错误
                 reader.onerror = () => {
+                    console.error('文件读取失败');
                     alert('文件读取失败，请重试！');
                     if (progressContainer && progressContainer.parentNode) {
                         progressContainer.parentNode.removeChild(progressContainer);
@@ -298,7 +339,15 @@ function initCustomBackground() {
                 };
                 
                 // 以Data URL格式读取文件
-                reader.readAsDataURL(file);
+                try {
+                    reader.readAsDataURL(file);
+                } catch (error) {
+                    console.error('读取文件时发生异常:', error);
+                    alert('读取文件时发生异常，请重试！');
+                    if (progressContainer && progressContainer.parentNode) {
+                        progressContainer.parentNode.removeChild(progressContainer);
+                    }
+                }
             } else {
                 alert('请选择图片或视频文件！');
                 fileName.textContent = '';
@@ -309,35 +358,36 @@ function initCustomBackground() {
     });
 
     // 选择预设背景图片
-    presetImages.forEach(img => {
-        img.addEventListener('click', () => {
+    presetImages.forEach(item => {
+        item.addEventListener('click', () => {
+            const img = item.querySelector('img');
             const bgUrl = img.getAttribute('data-url');
             bgImageUrlInput.value = bgUrl;
             setBackgroundImage(bgUrl);
             // 稍微延迟关闭，让用户看到选择成功的反馈
             setTimeout(() => {
-                closeModalWithAnimation();
+                closeSettingsModal();
             }, 300);
         });
     });
     
     // 选择预设视频背景
-    presetVideos.forEach(videoItem => {
-        videoItem.addEventListener('click', () => {
-            const videoUrl = videoItem.querySelector('.video-url').value;
+    presetVideos.forEach(item => {
+        item.addEventListener('click', () => {
+            const videoUrl = item.querySelector('.video-url').value;
             bgImageUrlInput.value = videoUrl;
             setBackgroundVideo(videoUrl);
             // 稍微延迟关闭，让用户看到选择成功的反馈
             setTimeout(() => {
-                closeModalWithAnimation();
+                closeSettingsModal();
             }, 300);
         });
     });
 
     // 按ESC键关闭弹窗
     document.addEventListener('keydown', (e) => {
-        if (e.key === 'Escape' && customBgModal.classList.contains('active')) {
-            closeModalWithAnimation();
+        if (e.key === 'Escape' && settingsModal.style.display === 'flex') {
+            closeSettingsModal();
         }
     });
 
@@ -376,9 +426,9 @@ function initCustomBackground() {
     
     // 初始化字体大小设置
     function initFontSizeSettings() {
-        const fontSizeBtns = document.querySelectorAll('.font-size-btn');
+        const fontSizeBtns = document.querySelectorAll('.size-btn');
         const customFontSizeSlider = document.getElementById('customFontSize');
-        const fontSizeValue = document.querySelector('.font-size-value');
+        const fontSizeValue = document.querySelector('.current-size');
         const contentElement = document.querySelector('.content');
         
         // 从本地存储加载保存的字体大小，如果没有则使用默认值
@@ -403,7 +453,7 @@ function initCustomBackground() {
             customFontSizeSlider.value = size;
             
             // 更新显示的字体大小百分比
-            fontSizeValue.textContent = `当前大小: ${Math.round(size * 100)}%`;
+            fontSizeValue.textContent = `${Math.round(size * 100)}%`;
             
             // 更新活动按钮样式
             fontSizeBtns.forEach(btn => {
@@ -436,8 +486,55 @@ function initCustomBackground() {
         });
     }
     
+    // 切换标签页 - 优化动画效果
+    function switchTab(tabName) {
+        // 移除所有标签按钮的激活状态
+        tabButtons.forEach(button => {
+            button.classList.remove('active');
+        });
+        
+        // 移除所有标签内容的激活状态
+        tabContents.forEach(content => {
+            content.classList.remove('active');
+        });
+        
+        // 找到对应的按钮和内容
+        const activeButton = document.querySelector(`[data-tab="${tabName}"]`);
+        const tabContent = document.getElementById(tabName);
+        
+        // 先激活按钮
+        if (activeButton) {
+            activeButton.classList.add('active');
+        }
+        
+        // 使用setTimeout延迟内容显示，使按钮激活动画先开始
+        setTimeout(() => {
+            if (tabContent) {
+                tabContent.classList.add('active');
+            }
+        }, 100);
+    }
+    
+    // 绑定标签页事件
+    function bindTabEvents() {
+        tabButtons.forEach(button => {
+            button.addEventListener('click', () => {
+                const tabName = button.getAttribute('data-tab');
+                if (tabName) {
+                    switchTab(tabName);
+                }
+            });
+        });
+    }
+    
     // 初始化字体大小设置
     initFontSizeSettings();
+    
+    // 绑定标签页事件
+    bindTabEvents();
+    
+    // 初始化显示第一个标签页
+    switchTab('background');
 }
 
 // 初始化自定义倒计时功能
@@ -749,16 +846,42 @@ function updateCountdown(time) {
 }
 
 function fetchHitokoto() {
+  // 更新为更稳定的一言API地址
+  const apiUrl = 'https://api.hitokoto.cn/';
+  
   var xhr = new XMLHttpRequest();
-  xhr.open('GET', 'https://v1.hitokoto.cn/', true);
+  xhr.open('GET', apiUrl, true);
+  
+  // 设置超时，防止请求卡住
+  xhr.timeout = 5000;
+  
   xhr.onload = function() {
     if (xhr.status >= 200 && xhr.status < 300) {
-      var response = JSON.parse(xhr.responseText);
-      document.getElementById("hitokoto").innerText = response.hitokoto + " -- " + response.from;
+      try {
+        var response = JSON.parse(xhr.responseText);
+        document.getElementById("hitokoto").innerText = response.hitokoto + " -- " + (response.from || '未知来源');
+      } catch (e) {
+        console.error('Error parsing hitokoto response:', e);
+      }
     } else {
       console.error('Error fetching hitokoto:', xhr.status);
+      // 设置默认文本，避免显示空白
+      document.getElementById("hitokoto").innerText = "奋斗是青春最亮丽的底色！";
     }
   };
+  
+  // 处理网络错误
+  xhr.onerror = function() {
+    console.error('Network error when fetching hitokoto');
+    document.getElementById("hitokoto").innerText = "努力是梦想与现实之间的桥梁！";
+  };
+  
+  // 处理超时
+  xhr.ontimeout = function() {
+    console.error('Timeout when fetching hitokoto');
+    document.getElementById("hitokoto").innerText = "坚持就是胜利！";
+  };
+  
   xhr.send();
 }
 
@@ -1074,34 +1197,39 @@ document.addEventListener('DOMContentLoaded', () => {
       showCheerMessage();
     });
     
-    // 初始化自定义背景功能
-    initCustomBackground();
+    // 初始化设置功能
+    initSettings();
     
     // 初始化自定义倒计时功能
     initCustomCountdown();
     
     // 添加背景随鼠标轻微移动的视差效果
     const backgroundContainer = document.querySelector('.background-container');
-    const maxMove = 5; // 最大移动像素
+    const maxMove = 15; // 增加移动距离，使效果更明显
     let parallaxEnabled = true; // 默认启用视差效果
     
     // 获取开关元素
     const disableParallaxToggle = document.getElementById('disableParallaxToggle');
     
     // 从本地存储读取设置
-    if (localStorage.getItem('parallaxDisabled') === 'true') {
-        parallaxEnabled = false;
-        disableParallaxToggle.checked = true;
-    }
+    const storedValue = localStorage.getItem('parallaxDisabled');
+    // 总是默认启用视差效果，忽略之前的设置
+    parallaxEnabled = true;
+    disableParallaxToggle.checked = false;
+    // 清除之前的设置
+    localStorage.setItem('parallaxDisabled', 'false');
     
     // 添加开关事件监听
     disableParallaxToggle.addEventListener('change', function() {
-        parallaxEnabled = !this.checked;
+        // 当开关被选中时，表示禁用视差效果
+        const isDisabled = this.checked;
+        parallaxEnabled = !isDisabled;
+        
         // 保存设置到本地存储
-        localStorage.setItem('parallaxDisabled', (!parallaxEnabled).toString());
+        localStorage.setItem('parallaxDisabled', isDisabled.toString());
         
         // 如果禁用视差，重置背景位置
-        if (!parallaxEnabled) {
+        if (isDisabled) {
             backgroundContainer.style.transform = 'translate(0px, 0px)';
         }
     });

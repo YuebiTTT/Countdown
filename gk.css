@@ -284,49 +284,178 @@ footer {
     background-color: rgba(0, 0, 0, 0.7);
 }
 
-/* 自定义背景弹窗样式 - 暗色系 */
-.custom-bg-modal {
-    opacity: 0;
-    visibility: hidden;
+/* 设置弹窗样式 */
+.settings-modal {
+    display: none;
     position: fixed;
     top: 0;
     left: 0;
     width: 100%;
     height: 100%;
     background-color: rgba(0, 0, 0, 0.7);
-    z-index: 1000;
+    backdrop-filter: blur(8px);
+    z-index: 10000;
     justify-content: center;
     align-items: center;
-    transition: opacity 0.5s cubic-bezier(0.4, 0, 0.2, 1), visibility 0.5s cubic-bezier(0.4, 0, 0.2, 1);
-    backdrop-filter: blur(0px);
+    animation: fadeIn 0.3s ease;
 }
 
-.custom-bg-modal.active {
-    opacity: 1;
-    visibility: visible;
-    display: flex;
-    backdrop-filter: blur(4px);
-    transition: opacity 0.5s cubic-bezier(0.4, 0, 0.2, 1), visibility 0.5s cubic-bezier(0.4, 0, 0.2, 1), backdrop-filter 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
 }
 
-.custom-bg-modal-content {
-    background-color: #1a1a1a;
-    color: #e0e0e0;
-    border-radius: 10px;
+.settings-modal-content {
+    background: linear-gradient(135deg, rgba(30, 30, 30, 0.98), rgba(20, 20, 20, 0.98));
+    border-radius: 16px;
+    padding: 0;
     width: 90%;
-    max-width: 500px;
-    padding: 20px;
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6);
-    position: relative;
-    border: 1px solid #333;
-    transform: translateY(30px) scale(0.95);
-    opacity: 0;
-    transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.5s cubic-bezier(0.4, 0, 0.2, 1);
-    overflow-y: auto;
+    max-width: 650px;
     max-height: 85vh;
-    /* 美化滚动条 - 全局应用 */
-    scrollbar-width: thin;
-    scrollbar-color: #333 #1a1a1a;
+    overflow: hidden;
+    box-shadow: 0 15px 40px rgba(0, 0, 0, 0.6);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    animation: slideIn 0.4s ease;
+}
+
+@keyframes slideIn {
+    from {
+        opacity: 0;
+        transform: translateY(-30px) scale(0.95);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+/* 标签页导航 */
+.settings-tabs {
+    display: flex;
+    background: rgba(255, 255, 255, 0.03);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+/* 修复类名不一致问题，同时支持tab-button和tab-btn */
+.tab-button, .tab-btn {
+    flex: 1;
+    padding: 16px 20px;
+    background: none;
+    border: none;
+    color: #aaa;
+    font-size: 16px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+.tab-button:hover, .tab-btn:hover {
+    background: rgba(255, 255, 255, 0.05);
+    color: #e0e0e0;
+    transform: translateY(-1px);
+}
+
+.tab-button.active, .tab-btn.active {
+    color: #0078d4;
+    background: rgba(0, 120, 212, 0.05);
+    font-weight: 600;
+}
+
+/* 为激活状态添加更美观的指示器 */
+.tab-button.active::after, .tab-btn.active::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 20%;
+    right: 20%;
+    height: 3px;
+    background: linear-gradient(90deg, #0078d4, #00b4ff);
+    border-radius: 3px 3px 0 0;
+    transform: translateY(0);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 0 0 10px rgba(0, 120, 212, 0.5);
+}
+
+/* 标签内容样式 - 添加切换动画 */
+.tab-content {
+    padding: 24px;
+    max-height: calc(85vh - 70px);
+    overflow-y: auto;
+}
+
+/* 标签页内容动画 */
+.tab-pane {
+    opacity: 0;
+    transform: translateY(10px);
+    transition: opacity 0.4s ease, transform 0.4s ease;
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    padding: 24px;
+    max-height: calc(85vh - 70px);
+    overflow-y: auto;
+    background: transparent;
+}
+
+.tab-pane.active {
+    opacity: 1;
+    transform: translateY(0);
+    position: relative;
+    z-index: 1;
+}
+
+/* 为tab-content添加相对定位，以便容纳绝对定位的tab-pane */
+.settings-tabs + .tab-content {
+    position: relative;
+    min-height: calc(85vh - 70px);
+    overflow: hidden;
+}
+
+/* 标签页内容 */
+.tab-content {
+    padding: 24px;
+    max-height: calc(85vh - 70px);
+    overflow-y: auto;
+}
+
+/* 模态框头部 */
+.modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 16px 24px;
+    background: rgba(255, 255, 255, 0.02);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.modal-header h2 {
+    color: #fff;
+    margin: 0;
+    font-size: 20px;
+    font-weight: 600;
+}
+
+.modal-close {
+    background: none;
+    border: none;
+    color: #ccc;
+    font-size: 24px;
+    cursor: pointer;
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    transition: all 0.3s ease;
+}
+
+.modal-close:hover {
+    background: rgba(255, 255, 255, 0.1);
+    color: #ff4444;
 }
 
 /* 桌面视图下的美化滚动条样式 */
@@ -460,9 +589,6 @@ footer {
     padding-bottom: 10px;
 }
 
-.modal-body {
-    margin-top: 20px;
-}
 
 #bgImageUrl {
     width: 100%;
@@ -550,23 +676,7 @@ footer {
     font-style: italic;
 }
 
-/* 文件大小限制提示和开关样式 */
-.file-size-limit {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    margin-top: 5px; /* 进一步减小间距 */
-    padding: 8px;
-    background-color: rgba(30, 30, 30, 0.5);
-    border-radius: 4px;
-    border: 1px solid #333;
-}
 
-.size-limit-text {
-    color: #ccc;
-    font-size: 12px;
-    flex-grow: 1;
-}
 
 /* 开关样式 */
 .switch {
@@ -700,29 +810,145 @@ input:focus + .switch-slider {
     font-size: 12px;
 }
 
-.preset-images {
-    margin-top: 20px;
-}
-
-.preset-images p {
-    color: #ccc;
-}
-
-.image-grid {
+/* 预设背景网格 */
+.preset-grid {
     display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 10px;
-    margin-top: 10px;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 16px;
+    margin-top: 16px;
 }
 
-.image-grid img {
-    width: 100%;
-    height: 80px;
-    object-fit: cover;
-    border-radius: 4px;
+.preset-item {
     cursor: pointer;
-    transition: transform 0.2s ease, border 0.2s ease;
-    border: 2px solid #333;
+    transition: all 0.3s ease;
+    border-radius: 8px;
+    overflow: hidden;
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.preset-item:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.3);
+    border-color: rgba(255, 255, 255, 0.15);
+}
+
+.preset-item img {
+    width: 100%;
+    height: 100px;
+    object-fit: cover;
+    display: block;
+}
+
+.preset-item span {
+    display: block;
+    padding: 10px;
+    text-align: center;
+    color: #e0e0e0;
+    font-size: 14px;
+    font-weight: 500;
+}
+
+/* 滑块控制 */
+.slider-control {
+    margin-bottom: 20px;
+}
+
+.slider-control input[type="range"] {
+    width: 100%;
+    height: 6px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 3px;
+    outline: none;
+    -webkit-appearance: none;
+    appearance: none;
+}
+
+.slider-control input[type="range"]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 20px;
+    height: 20px;
+    background: #0078d4;
+    border-radius: 50%;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 8px rgba(0, 120, 212, 0.4);
+}
+
+.slider-control input[type="range"]::-webkit-slider-thumb:hover {
+    transform: scale(1.2);
+    box-shadow: 0 4px 12px rgba(0, 120, 212, 0.6);
+}
+
+.slider-control input[type="range"]::-moz-range-thumb {
+    width: 20px;
+    height: 20px;
+    background: #0078d4;
+    border-radius: 50%;
+    cursor: pointer;
+    border: none;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 8px rgba(0, 120, 212, 0.4);
+}
+
+.slider-control input[type="range"]::-moz-range-thumb:hover {
+    transform: scale(1.2);
+    box-shadow: 0 4px 12px rgba(0, 120, 212, 0.6);
+}
+
+/* 大小指示器 */
+.size-indicators {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 8px;
+    font-size: 14px;
+}
+
+.size-indicators span:first-child {
+    color: #888;
+    font-size: 12px;
+}
+
+.size-indicators span:last-child {
+    color: #888;
+    font-size: 18px;
+    font-weight: bold;
+}
+
+.current-size {
+    color: #0078d4;
+    font-weight: 600;
+}
+
+/* 预设大小按钮 */
+.preset-size-buttons {
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+}
+
+.size-btn {
+    padding: 8px 16px;
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 6px;
+    color: #e0e0e0;
+    font-size: 14px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.size-btn:hover {
+    background: rgba(255, 255, 255, 0.15);
+    border-color: rgba(255, 255, 255, 0.3);
+}
+
+.size-btn.active {
+    background: #0078d4;
+    border-color: #0078d4;
+    color: white;
 }
 
 .image-grid img:hover {
@@ -789,23 +1015,37 @@ h1 {
     to { opacity: 1; transform: translateY(0); }
 }
 
-/* 自定义背景图标样式 */
-.custom-bg-icon {
+/* 设置按钮样式 */
+.settings-btn {
     position: fixed;
     bottom: 120px;
     right: 50px;
     width: 50px;
     height: 50px;
-    background-color: rgba(0, 0, 0, 0.5);
+    background: rgba(0, 0, 0, 0.6);
     border-radius: 50%;
     display: flex;
     justify-content: center;
     align-items: center;
     cursor: pointer;
     opacity: 0;
-    transition: opacity 0.3s ease, transform 0.3s ease, background-color 0.3s ease;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     z-index: 9999;
     backdrop-filter: blur(5px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+}
+
+.settings-btn.visible {
+    opacity: 0.8;
+}
+
+.settings-btn:hover {
+    background: linear-gradient(135deg, rgba(0, 120, 212, 0.8), rgba(0, 78, 146, 0.8));
+    transform: scale(1.1);
+    opacity: 1;
+    border-color: rgba(255, 255, 255, 0.3);
+    box-shadow: 0 6px 20px rgba(0, 120, 212, 0.4);
 }
 
 /* 自定义倒计时按钮样式 */
@@ -1111,6 +1351,48 @@ h1 {
     padding: 2px 8px;
     border-radius: 4px;
     transition: opacity 0.3s ease;
+}
+
+/* 按钮基础样式 */
+.primary-btn, .secondary-btn {
+    padding: 10px 16px;
+    border: none;
+    border-radius: 6px;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-family: inherit;
+}
+
+/* 主要按钮样式 */
+.primary-btn {
+    background: linear-gradient(135deg, #0078d4, #005a9e);
+    color: white;
+    box-shadow: 0 2px 8px rgba(0, 120, 212, 0.3);
+}
+
+.primary-btn:hover {
+    background: linear-gradient(135deg, #0091ff, #0067b8);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(0, 120, 212, 0.4);
+}
+
+.primary-btn:active {
+    transform: translateY(0);
+}
+
+/* 次要按钮样式 */
+.secondary-btn {
+    background: rgba(255, 255, 255, 0.1);
+    color: #d0d0d0;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.secondary-btn:hover {
+    background: rgba(255, 255, 255, 0.15);
+    border-color: rgba(255, 255, 255, 0.3);
+    color: white;
 }
 
 /* 倒计时时间显示 */
