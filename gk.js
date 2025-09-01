@@ -850,7 +850,7 @@ function updateCountdown(time) {
 
 function fetchHitokoto() {
   // 更新为更稳定的一言API地址
-  const apiUrl = 'https://api.hitokoto.cn/';
+  const apiUrl = 'https://v1.hitokoto.cn/';
   
   var xhr = new XMLHttpRequest();
   xhr.open('GET', apiUrl, true);
