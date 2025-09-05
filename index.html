@@ -9,6 +9,11 @@
 <script src="gk.js"></script>
 </head>
 <body>
+    <!-- 鼠标跟随效果元素 -->
+    <div id="mouse-follower" class="mouse-follower">
+        <div class="follower-circle"></div>
+    </div>
+    
     <div class="background-container">
         <!-- 视频背景元素 -->
         <video id="backgroundVideo" class="background-video" autoplay muted loop playsinline></video>
@@ -187,6 +192,14 @@
                                 <span>点击波纹效果</span>
                                 <label class="switch">
                                     <input type="checkbox" id="enableRippleToggle" checked>
+                                    <span class="switch-slider"></span>
+                                </label>
+                            </div>
+                            
+                            <div class="toggle-setting">
+                                <span>鼠标跟随效果</span>
+                                <label class="switch">
+                                    <input type="checkbox" id="enableMouseFollowerToggle" checked>
                                     <span class="switch-slider"></span>
                                 </label>
                             </div>

@@ -1356,4 +1356,67 @@ document.addEventListener('DOMContentLoaded', () => {
     // 为背景容器添加平滑过渡效果
     backgroundContainer.style.transition = 'transform 0.15s ease-out';
     
+    // 初始化鼠标跟随效果
+    const mouseFollower = document.getElementById('mouse-follower');
+    const followerCircle = document.querySelector('.follower-circle');
+    const enableMouseFollowerToggle = document.getElementById('enableMouseFollowerToggle');
+    
+    // 从本地存储加载设置
+    const savedMouseFollowerState = localStorage.getItem('enableMouseFollower');
+    if (savedMouseFollowerState !== null) {
+        enableMouseFollowerToggle.checked = savedMouseFollowerState === 'true';
+    }
+    
+    // 移动设备上减少效果的复杂度以提升性能
+    if (isMobile) {
+        // 设置移动设备上的样式
+        followerCircle.style.width = '20px';
+        followerCircle.style.height = '20px';
+    }
+    
+    // 处理开关状态变化
+    enableMouseFollowerToggle.addEventListener('change', () => {
+        localStorage.setItem('enableMouseFollower', enableMouseFollowerToggle.checked);
+        if (!enableMouseFollowerToggle.checked) {
+            mouseFollower.style.opacity = '0';
+        }
+    });
+    
+    // 鼠标移动事件 - 跟随鼠标移动
+    document.addEventListener('mousemove', (e) => {
+        // 在移动设备上隐藏鼠标跟随效果
+        if (isMobile) {
+            mouseFollower.style.opacity = '0';
+            return;
+        }
+        
+        // 检查开关状态
+        if (enableMouseFollowerToggle.checked) {
+            // 显示跟随效果
+            mouseFollower.style.opacity = '1';
+            
+            // 设置跟随元素的位置
+            followerCircle.style.left = `${e.clientX}px`;
+            followerCircle.style.top = `${e.clientY}px`;
+        }
+    });
+    
+    // 鼠标点击效果
+    document.addEventListener('mousedown', () => {
+        if (!isMobile && enableMouseFollowerToggle.checked) {
+            mouseFollower.classList.add('click');
+        }
+    });
+    
+    document.addEventListener('mouseup', () => {
+        if (!isMobile) {
+            mouseFollower.classList.remove('click');
+        }
+    });
+    
+    // 鼠标离开页面时隐藏跟随效果
+    document.addEventListener('mouseleave', () => {
+        mouseFollower.style.opacity = '0';
+    });
+    
 });
