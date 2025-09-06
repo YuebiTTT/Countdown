@@ -163,35 +163,36 @@ h1:hover {
         overflow-y: auto;
         box-sizing: border-box;
         -webkit-overflow-scrolling: touch; /* 启用iOS平滑滚动 */
-        scrollbar-width: thin; /* Firefox滚动条样式 */
-        scrollbar-color: #444 #1a1a1a; /* Firefox滚动条颜色 */
     }
     
-    /* 美化滚动条样式 */
-    .custom-bg-modal-content::-webkit-scrollbar {
-        width: 8px;
-    }
-    
-    .custom-bg-modal-content::-webkit-scrollbar-track {
-        background: #1a1a1a;
-        border-radius: 4px;
-    }
-    
-    .custom-bg-modal-content::-webkit-scrollbar-thumb {
-        background: linear-gradient(to bottom, #333, #444);
-        border-radius: 4px;
-        border: 1px solid #2a2a2a;
-    }
-    
-    .custom-bg-modal-content::-webkit-scrollbar-thumb:hover {
-        background: linear-gradient(to bottom, #444, #555);
-    }
-    
-    /* Firefox滚动条样式优化 */
-    .custom-bg-modal-content {
-        scrollbar-width: thin;
-        scrollbar-color: #333 #1a1a1a;
-    }
+
+/* ===== 自定义背景弹窗滚动条样式 ===== */
+.custom-bg-modal-content {
+    scrollbar-width: thin;
+    scrollbar-color: rgba(120, 120, 120, 0.35) transparent !important;
+}
+
+.custom-bg-modal-content::-webkit-scrollbar {
+    width: 8px !important;
+}
+
+.custom-bg-modal-content::-webkit-scrollbar-track {
+    background: rgba(255, 255, 255, 0.02) !important;
+    border-radius: 10px !important;
+}
+
+.custom-bg-modal-content::-webkit-scrollbar-thumb {
+    background: rgba(120, 120, 120, 0.35) !important;
+    border-radius: 10px !important;
+    border: 2px solid transparent !important;
+    background-clip: padding-box !important;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+}
+
+.custom-bg-modal-content::-webkit-scrollbar-thumb:hover {
+    background: rgba(150, 150, 150, 0.5) !important;
+    border-width: 1px !important;
+}
     
     /* 调整图片网格为2列布局，更适合小屏幕 */
     .image-grid {
@@ -246,6 +247,74 @@ h1:hover {
         font-size: 14px;
     }
 }
+
+    /* ===== 全局滚动条美化样式 ===== */
+/* 针对所有可滚动元素的基础样式 */
+* {
+    scrollbar-width: thin;
+    scrollbar-color: rgba(100, 100, 100, 0.3) transparent;
+}
+
+/* 美化所有滚动条样式（Webkit浏览器） */
+::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+}
+
+::-webkit-scrollbar-track {
+    background: rgba(255, 255, 255, 0.02);
+    border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb {
+    background: rgba(100, 100, 100, 0.3);
+    border-radius: 10px;
+    border: 2px solid transparent;
+    background-clip: padding-box;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: rgba(130, 130, 130, 0.4);
+    border-width: 1px;
+}
+
+::-webkit-scrollbar-thumb:active {
+    background: rgba(150, 150, 150, 0.5);
+}
+
+::-webkit-scrollbar-corner {
+    background: transparent;
+}
+
+/* ===== 设置弹窗滚动条样式 ===== */
+.settings-modal-content {
+    scrollbar-width: thin;
+    scrollbar-color: rgba(120, 120, 120, 0.35) transparent !important;
+}
+
+.settings-modal-content::-webkit-scrollbar {
+    width: 8px !important;
+}
+
+.settings-modal-content::-webkit-scrollbar-track {
+    background: rgba(255, 255, 255, 0.02) !important;
+    border-radius: 10px !important;
+}
+
+.settings-modal-content::-webkit-scrollbar-thumb {
+    background: rgba(120, 120, 120, 0.35) !important;
+    border-radius: 10px !important;
+    border: 2px solid transparent !important;
+    background-clip: padding-box !important;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+}
+
+.settings-modal-content::-webkit-scrollbar-thumb:hover {
+    background: rgba(150, 150, 150, 0.5) !important;
+    border-width: 1px !important;
+}
+
 .overlay {
     position: absolute;
     top: 0;
@@ -427,7 +496,7 @@ footer {
     left: 0;
     right: 0;
     padding: 24px;
-    max-height: calc(85vh - 70px);
+    max-height: calc(55vh - 70px);
     overflow-y: auto;
     background: transparent;
 }
@@ -442,7 +511,7 @@ footer {
 /* 为tab-content添加相对定位，以便容纳绝对定位的tab-pane */
 .settings-tabs + .tab-content {
     position: relative;
-    min-height: calc(85vh - 70px);
+    min-height: calc(85vh);
     overflow-y: auto;
 }
 
@@ -490,25 +559,7 @@ footer {
     color: #ff4444;
 }
 
-/* 桌面视图下的美化滚动条样式 */
-.custom-bg-modal-content::-webkit-scrollbar {
-    width: 8px;
-}
 
-.custom-bg-modal-content::-webkit-scrollbar-track {
-    background: #1a1a1a;
-    border-radius: 4px;
-}
-
-.custom-bg-modal-content::-webkit-scrollbar-thumb {
-    background: linear-gradient(to bottom, #333, #444);
-    border-radius: 4px;
-    border: 1px solid #2a2a2a;
-}
-
-.custom-bg-modal-content::-webkit-scrollbar-thumb:hover {
-    background: linear-gradient(to bottom, #444, #555);
-}
 
 .custom-bg-modal.active .custom-bg-modal-content {
     transform: translateY(0) scale(1);
