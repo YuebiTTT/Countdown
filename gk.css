@@ -79,6 +79,7 @@ body {
 .content {
     transition: transform 0.3s ease;
     transform-origin: center center;
+    transform: translateY(-30px); /* 将内容向上移动30px */
 }
 
 .blur-background {
