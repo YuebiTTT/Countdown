@@ -90,48 +90,159 @@ export function initCustomCountdown() {
     // 标记是否正在处理过渡效果，防止事件频繁触发
     let isTransitioning = false;
     
-    // 显示取消文字的函数 - 添加渐变动画
+    // 显示取消文字的函数 - 增强动画效果
     function showCancelText() {
         if (isTransitioning || !window.customCountdownActive) return;
         isTransitioning = true;
         
-        // 确保两个元素都可见以实现渐变效果
+        // 确保两个元素都可见以实现动画效果
         countdownCancel.style.display = 'block';
         
-        // 添加淡出效果
-        countdownTime.style.opacity = '0';
+        // 重置取消文字的样式
+        countdownCancel.style.opacity = '0';
+        countdownCancel.style.transform = 'translate(-50%, -50%) scale(0.4) rotate(-20deg)';
+        countdownCancel.style.color = '#ff5722';
+        countdownCancel.style.fontSize = '22px';
+        countdownCancel.style.fontWeight = 'bold';
+        countdownCancel.style.textShadow = 'none';
         
-        // 添加淡入效果
-        countdownCancel.style.opacity = '1';
+        // 添加时间文字的淡出动画
+        countdownTime.style.opacity = '0';
+        countdownTime.style.transform = 'translate(-50%, -50%) scale(1.4) rotate(20deg)';
+        
+        // 添加容器的高亮效果
+        countdownTextContainer.style.backgroundColor = 'rgba(255, 87, 34, 0.2)';
+        countdownTextContainer.style.boxShadow = '0 0 20px rgba(255, 87, 34, 0.5)';
+        countdownTextContainer.style.transform = 'scale(1.05)';
+        
+        // 添加取消文字的入场动画
+        setTimeout(() => {
+            countdownCancel.style.opacity = '1';
+            countdownCancel.style.transform = 'translate(-50%, -50%) scale(1.3) rotate(5deg)';
+            countdownCancel.style.color = '#ff6e40';
+            countdownCancel.style.textShadow = '0 0 8px rgba(255, 110, 64, 0.6)';
+            
+            // 添加弹性弹跳效果
+            setTimeout(() => {
+                countdownCancel.style.transform = 'translate(-50%, -50%) scale(1.2) rotate(-2deg)';
+                setTimeout(() => {
+                    countdownCancel.style.transform = 'translate(-50%, -50%) scale(1.1) rotate(1deg)';
+                    setTimeout(() => {
+                        countdownCancel.style.transform = 'translate(-50%, -50%) scale(1) rotate(0)';
+                        countdownCancel.style.color = '#ff5722';
+                    }, 100);
+                }, 100);
+            }, 200);
+        }, 50);
+        
+        // 添加容器的呼吸效果
+        let containerPulse = 0;
+        const containerInterval = setInterval(() => {
+            if (containerPulse % 2 === 0) {
+                countdownTextContainer.style.transform = 'scale(1.08)';
+                countdownTextContainer.style.boxShadow = '0 0 25px rgba(255, 87, 34, 0.6)';
+            } else {
+                countdownTextContainer.style.transform = 'scale(1.03)';
+                countdownTextContainer.style.boxShadow = '0 0 15px rgba(255, 87, 34, 0.4)';
+            }
+            containerPulse++;
+            if (containerPulse >= 4) {
+                clearInterval(containerInterval);
+                countdownTextContainer.style.transform = 'scale(1)';
+            }
+        }, 300);
+        
+        // 添加文字的彩色脉冲效果
+        let textPulseCount = 0;
+        const textPulseInterval = setInterval(() => {
+            const colors = ['#ff5722', '#ff9800', '#ffc107', '#ff5722'];
+            const shadows = ['0 0 8px rgba(255, 87, 34, 0.6)', '0 0 8px rgba(255, 152, 0, 0.6)', '0 0 8px rgba(255, 193, 7, 0.6)', '0 0 8px rgba(255, 87, 34, 0.6)'];
+            
+            countdownCancel.style.color = colors[textPulseCount];
+            countdownCancel.style.textShadow = shadows[textPulseCount];
+            
+            textPulseCount++;
+            if (textPulseCount >= colors.length) {
+                clearInterval(textPulseInterval);
+            }
+        }, 250);
         
         // 等待动画完成
         setTimeout(() => {
             // 隐藏时间显示元素，但保持取消元素可见
             countdownTime.style.display = 'none';
             isTransitioning = false;
-        }, 300);
+        }, 1200);
     }
     
-    // 恢复时间显示的函数 - 添加渐变动画
+    // 恢复时间显示的函数 - 增强动画效果
     function showTimeText() {
         if (isTransitioning || !window.customCountdownActive) return;
         isTransitioning = true;
         
-        // 确保两个元素都可见以实现渐变效果
+        // 确保两个元素都可见以实现动画效果
         countdownTime.style.display = 'flex';
         
-        // 添加淡出效果
-        countdownCancel.style.opacity = '0';
+        // 重置时间文字的样式
+        countdownTime.style.opacity = '0';
+        countdownTime.style.transform = 'translate(-50%, -50%) scale(0.4) rotate(20deg)';
+        countdownTime.style.color = '#4caf50';
+        countdownTime.style.textShadow = 'none';
         
-        // 添加淡入效果
-        countdownTime.style.opacity = '1';
+        // 添加取消文字的淡出动画
+        countdownCancel.style.opacity = '0';
+        countdownCancel.style.transform = 'translate(-50%, -50%) scale(1.4) rotate(-20deg)';
+        
+        // 容器效果过渡
+        countdownTextContainer.style.backgroundColor = 'rgba(76, 175, 80, 0.1)';
+        countdownTextContainer.style.boxShadow = '0 0 15px rgba(76, 175, 80, 0.3)';
+        countdownTextContainer.style.transform = 'scale(1.05)';
+        
+        // 添加时间文字的入场动画
+        setTimeout(() => {
+            countdownTime.style.opacity = '1';
+            countdownTime.style.transform = 'translate(-50%, -50%) scale(1.3) rotate(-5deg)';
+            countdownTime.style.color = '#66bb6a';
+            countdownTime.style.textShadow = '0 0 8px rgba(102, 187, 106, 0.6)';
+            
+            // 添加弹性弹跳效果
+            setTimeout(() => {
+                countdownTime.style.transform = 'translate(-50%, -50%) scale(1.2) rotate(2deg)';
+                setTimeout(() => {
+                    countdownTime.style.transform = 'translate(-50%, -50%) scale(1.1) rotate(-1deg)';
+                    setTimeout(() => {
+                        countdownTime.style.transform = 'translate(-50%, -50%) scale(1) rotate(0)';
+                        countdownTime.style.color = '#4caf50';
+                        countdownTextContainer.style.backgroundColor = 'transparent';
+                        countdownTextContainer.style.boxShadow = 'none';
+                    }, 100);
+                }, 100);
+            }, 200);
+        }, 50);
+        
+        // 添加容器的呼吸效果
+        let containerPulse = 0;
+        const containerInterval = setInterval(() => {
+            if (containerPulse % 2 === 0) {
+                countdownTextContainer.style.transform = 'scale(1.08)';
+                countdownTextContainer.style.boxShadow = '0 0 20px rgba(76, 175, 80, 0.4)';
+            } else {
+                countdownTextContainer.style.transform = 'scale(1.03)';
+                countdownTextContainer.style.boxShadow = '0 0 10px rgba(76, 175, 80, 0.2)';
+            }
+            containerPulse++;
+            if (containerPulse >= 4) {
+                clearInterval(containerInterval);
+                countdownTextContainer.style.transform = 'scale(1)';
+            }
+        }, 300);
         
         // 等待动画完成
         setTimeout(() => {
             // 隐藏取消显示元素，但保持时间元素可见
             countdownCancel.style.display = 'none';
             isTransitioning = false;
-        }, 300);
+        }, 1200);
     }
     
     // 鼠标悬浮事件 - 使用防抖
@@ -212,11 +323,8 @@ export function initCustomCountdown() {
         }
     });
     
-    // 确保初始状态正确，移除过渡动画
+    // 确保初始状态正确
     countdownTime.style.opacity = '1';
-    // 移除过渡效果，避免悬浮时的动画
-    countdownTime.style.transition = 'none';
-    countdownCancel.style.transition = 'none';
 }
 
 // 显示自定义倒计时

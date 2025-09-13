@@ -748,12 +748,9 @@ function initCustomCountdown() {
             }, 500); // 短暂延迟后恢复时间显示
         }
     });
-    
-    // 确保初始状态正确，移除过渡动画
+        
+    // 确保初始状态正确
     countdownTime.style.opacity = '1';
-    // 移除过渡效果，避免悬浮时的动画
-    countdownTime.style.transition = 'none';
-    countdownCancel.style.transition = 'none';
 }
 
 // 选择启用动态取色功能或自动颜色调整
