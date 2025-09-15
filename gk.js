@@ -848,6 +848,9 @@ function updateCountdown(time) {
 function fetchHitokoto(retryCount = 0) {
   // 更新为更稳定的一言API地址
   const apiUrl = 'https://v1.hitokoto.cn/';
+  const hitokotoElement = document.getElementById("hitokoto");
+  const contentElement = document.getElementById("hitokoto-content");
+  const sourceElement = document.getElementById("hitokoto-source");
   
   var xhr = new XMLHttpRequest();
   xhr.open('GET', apiUrl, true);
@@ -859,21 +862,26 @@ function fetchHitokoto(retryCount = 0) {
     if (xhr.status >= 200 && xhr.status < 300) {
       try {
         var response = JSON.parse(xhr.responseText);
-        document.getElementById("hitokoto").innerText = response.hitokoto + " -- " + (response.from || '未知来源');
+        contentElement.innerText = response.hitokoto;
+        sourceElement.innerText = response.from ? " —— " + response.from : "";
       } catch (e) {
         console.error('Error parsing hitokoto response:', e);
+        contentElement.innerText = "奋斗是青春最亮丽的底色！";
+        sourceElement.innerText = "";
       }
     } else {
       console.error('Error fetching hitokoto:', xhr.status);
       // 设置默认文本，避免显示空白
-      document.getElementById("hitokoto").innerText = "奋斗是青春最亮丽的底色！";
+      contentElement.innerText = "奋斗是青春最亮丽的底色！";
+      sourceElement.innerText = "";
     }
   };
   
   // 处理网络错误
   xhr.onerror = function() {
     console.error('Network error when fetching hitokoto');
-    document.getElementById("hitokoto").innerText = "努力是梦想与现实之间的桥梁！";
+    contentElement.innerText = "努力是梦想与现实之间的桥梁！";
+    sourceElement.innerText = "";
   };
   
   // 处理超时
@@ -889,7 +897,8 @@ function fetchHitokoto(retryCount = 0) {
       }, 1000);
     } else {
       // 重试次数已达上限，显示错误信息
-      document.getElementById("hitokoto").innerText = "坚持就是胜利！";
+      contentElement.innerText = "坚持就是胜利！";
+      sourceElement.innerText = "";
     }
   };
   
