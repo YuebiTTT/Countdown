@@ -240,6 +240,50 @@ export function showCheerMessage() {
     }, 2000);
 }
 
+// 播放提示音
+function playNotificationSound() {
+    try {
+        // 创建音频上下文
+        const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+        
+        // 创建振荡器
+        const oscillator = audioContext.createOscillator();
+        const gainNode = audioContext.createGain();
+        
+        // 连接节点
+        oscillator.connect(gainNode);
+        gainNode.connect(audioContext.destination);
+        
+        // 设置音频参数 - 增大音量并使用更明显的声音类型
+        oscillator.type = 'square'; // 方波（更明显）
+        oscillator.frequency.value = 1000; // 频率 (Hz) - 略微提高
+        gainNode.gain.value = 0.6; // 音量 - 大幅增加
+        
+        // 播放音频
+        oscillator.start();
+        
+        // 先保持高音量
+        gainNode.gain.setValueAtTime(0.6, audioContext.currentTime);
+        
+        // 0.5秒后开始降低音量
+        gainNode.gain.exponentialRampToValueAtTime(
+            0.001, audioContext.currentTime + 1.5
+        );
+        
+        // 添加频率变化使声音更明显
+        oscillator.frequency.exponentialRampToValueAtTime(
+            500, audioContext.currentTime + 1.5
+        );
+        
+        // 1.5秒后停止
+        setTimeout(() => {
+            oscillator.stop();
+        }, 1500);
+    } catch (error) {
+        console.error('播放提示音失败:', error);
+    }
+}
+
 // 数字补零函数
 export function padZero(num) {
     return num < 10 ? '0' + num : num;

@@ -1380,7 +1380,7 @@ h1 {
 /* 自定义倒计时显示样式 */
 .custom-countdown-display {
     position: fixed;
-    bottom: 20px;
+    bottom: 60px;
     left: 0;
     width: 100%;
     text-align: center;

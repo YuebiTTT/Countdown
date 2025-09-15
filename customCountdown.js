@@ -356,6 +356,7 @@ export function updateCustomCountdown() {
     if (timeDiff <= 0) {
         hideCustomCountdown();
         showCheerMessage('倒计时结束！🎉');
+        playNotificationSound();
         return;
     }
     
