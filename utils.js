@@ -3,32 +3,62 @@ export function fetchHitokoto() {
     const hitokotoElement = document.getElementById('hitokoto');
     if (!hitokotoElement) return;
     
-    // 定义一言API地址
-    const apiUrl = 'https://v1.hitokoto.cn/?c=a';
+    // 定义一言API地址列表（包含备用地址）
+    const apiUrls = [
+        'https://v1.hitokoto.cn/?c=a',
+        'https://international.v1.hitokoto.cn/?c=a',
+        'https://api.imjad.cn/hitokoto/?c=a'
+    ];
     
-    // 使用fetch API调用一言接口
-    fetch(apiUrl)
-        .then(response => response.json())
-        .then(data => {
-            // 更新一言文本
-            hitokotoElement.textContent = data.hitokoto;
-            
-            // 添加淡入效果
-            hitokotoElement.style.opacity = '0';
-            hitokotoElement.style.transform = 'translateY(10px)';
-            
-            // 使用requestAnimationFrame确保样式应用后再进行动画
-            requestAnimationFrame(() => {
-                hitokotoElement.style.transition = 'opacity 0.5s ease, transform 0.5s ease';
-                hitokotoElement.style.opacity = '1';
-                hitokotoElement.style.transform = 'translateY(0)';
-            });
-        })
-        .catch(error => {
-            console.error('获取一言失败:', error);
-            // 如果调用失败，使用默认文本
+    // 设置最大重试次数
+    const maxRetries = 3;
+    
+    // 实现重试逻辑
+    function attemptFetch(retryCount = 0, currentUrlIndex = 0) {
+        if (retryCount >= maxRetries) {
+            // 如果重试次数用完，使用默认文本
+            console.error('多次尝试获取一言失败，使用默认文本');
             hitokotoElement.textContent = '好好学习，天天向上！';
-        });
+            return;
+        }
+        
+        // 选择API地址（循环使用备用地址）
+        const apiUrl = apiUrls[currentUrlIndex % apiUrls.length];
+        
+        // 使用fetch API调用一言接口
+        fetch(apiUrl)
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                return response.json();
+            })
+            .then(data => {
+                // 更新一言文本
+                hitokotoElement.textContent = data.hitokoto || data.content || '好好学习，天天向上！';
+                
+                // 添加淡入效果
+                hitokotoElement.style.opacity = '0';
+                hitokotoElement.style.transform = 'translateY(10px)';
+                
+                // 使用requestAnimationFrame确保样式应用后再进行动画
+                requestAnimationFrame(() => {
+                    hitokotoElement.style.transition = 'opacity 0.5s ease, transform 0.5s ease';
+                    hitokotoElement.style.opacity = '1';
+                    hitokotoElement.style.transform = 'translateY(0)';
+                });
+            })
+            .catch(error => {
+                console.error(`获取一言失败（尝试${retryCount + 1}/${maxRetries}）:`, error);
+                // 延迟1秒后重试，换一个API地址
+                setTimeout(() => {
+                    attemptFetch(retryCount + 1, currentUrlIndex + 1);
+                }, 1000);
+            });
+    }
+    
+    // 开始首次尝试
+    attemptFetch();
 }
 
 // 自动颜色设置函数
