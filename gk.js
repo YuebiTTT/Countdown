@@ -845,7 +845,7 @@ function updateCountdown(time) {
     }
 }
 
-function fetchHitokoto() {
+function fetchHitokoto(retryCount = 0) {
   // 更新为更稳定的一言API地址
   const apiUrl = 'https://v1.hitokoto.cn/';
   
@@ -878,8 +878,19 @@ function fetchHitokoto() {
   
   // 处理超时
   xhr.ontimeout = function() {
-    console.error('Timeout when fetching hitokoto');
-    document.getElementById("hitokoto").innerText = "坚持就是胜利！";
+    console.error('Timeout when fetching hitokoto, retry count:', retryCount);
+    
+    // 如果重试次数小于2，则重试
+    if (retryCount < 2) {
+      console.log('Retrying hitokoto request...');
+      // 稍微延迟后重试，避免立即重试
+      setTimeout(() => {
+        fetchHitokoto(retryCount + 1);
+      }, 1000);
+    } else {
+      // 重试次数已达上限，显示错误信息
+      document.getElementById("hitokoto").innerText = "坚持就是胜利！";
+    }
   };
   
   xhr.send();

@@ -1,5 +1,6 @@
 import { isMobile, backgroundContainer, backgroundVideo, fontSizeSettings, useDynamicColor } from './main.js';
-import { setAutoColor } from './utils.js';
+// 动态导入utils.js，确保能正确访问到fetchHitokoto函数
+let utilsModule;
 
 // 初始化设置功能
 export function initSettings() {
@@ -16,6 +17,14 @@ export function initSettings() {
     // 初始化背景元素（使用全局变量）
     window.backgroundContainer = document.querySelector('.background-container');
     window.backgroundVideo = document.getElementById('backgroundVideo');
+    
+    // 预先加载utils模块，确保函数可用
+    import('./utils.js').then(module => {
+        utilsModule = module;
+        console.log('utils模块已成功加载');
+    }).catch(error => {
+        console.error('加载utils模块失败:', error);
+    });
     
     // 标签页相关元素
     const tabButtons = document.querySelectorAll('.tab-btn');
@@ -381,6 +390,61 @@ export function initSettings() {
     
     // 初始化显示第一个标签页
     switchTab('background');
+    
+    // 初始化更新一言按钮
+    function initRefreshHitokotoBtn() {
+        // 由于更新一言按钮在设置弹窗内部，我们需要等待设置弹窗创建后再绑定事件
+        setTimeout(() => {
+            console.log('尝试初始化更新一言按钮...');
+            const refreshHitokotoBtn = document.getElementById('refreshHitokotoBtn');
+            if (refreshHitokotoBtn) {
+                console.log('找到更新一言按钮，绑定点击事件...');
+                // 先移除可能存在的事件监听器，防止重复绑定
+                const newButton = refreshHitokotoBtn.cloneNode(true);
+                refreshHitokotoBtn.parentNode.replaceChild(newButton, refreshHitokotoBtn);
+                
+                newButton.addEventListener('click', () => {
+                    console.log('点击了更新一言按钮');
+                    // 为了确保函数调用成功，我们直接在按钮点击时更新文本
+                    const hitokotoElement = document.getElementById('hitokoto');
+                    if (hitokotoElement) {
+                        hitokotoElement.textContent = '正在获取新的一言...';
+                    }
+                    
+                    // 确保utils模块已加载
+                    if (utilsModule && utilsModule.fetchHitokoto) {
+                        console.log('使用utils模块中的fetchHitokoto函数');
+                        utilsModule.fetchHitokoto();
+                    } else {
+                        console.log('utils模块尚未加载，尝试动态导入后再调用');
+                        import('./utils.js').then(module => {
+                            utilsModule = module;
+                            module.fetchHitokoto();
+                        }).catch(error => {
+                            console.error('加载utils模块并调用fetchHitokoto失败:', error);
+                            if (hitokotoElement) {
+                                hitokotoElement.textContent = '获取一言失败，请稍后重试';
+                            }
+                        });
+                    }
+                });
+            } else {
+                console.log('未找到更新一言按钮');
+            }
+        }, 1000); // 1秒后再绑定事件，确保设置弹窗已经初始化
+    }
+    
+    // 立即尝试初始化
+    initRefreshHitokotoBtn();
+    
+    // 当设置弹窗打开时再尝试一次，确保DOM已完全加载
+    settingsModal.addEventListener('click', function onModalOpen() {
+        if (settingsModal.style.display === 'flex') {
+            setTimeout(initRefreshHitokotoBtn, 100);
+            // 移除这个事件监听器，避免重复调用
+            settingsModal.removeEventListener('click', onModalOpen);
+        }
+    });
 }
 
 // 设置背景图片并保存到本地存储

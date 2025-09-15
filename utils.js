@@ -1,60 +1,104 @@
 // 一言API调用函数
 export function fetchHitokoto() {
     const hitokotoElement = document.getElementById('hitokoto');
-    if (!hitokotoElement) return;
+    if (!hitokotoElement) {
+        console.warn('未找到hitokoto元素，无法更新一言内容');
+        return;
+    }
     
-    // 定义一言API地址列表（包含备用地址）
+    // 定义一言API地址列表（包含多个备用地址提高稳定性）
     const apiUrls = [
         'https://v1.hitokoto.cn/?c=a',
         'https://international.v1.hitokoto.cn/?c=a',
-        'https://api.imjad.cn/hitokoto/?c=a'
+        'https://api.lovelive.tools/api/SweetNothings',
+        'https://api.iyk0.com/sjtx/api.php?type=text'
     ];
     
     // 设置最大重试次数
     const maxRetries = 3;
     
-    // 实现重试逻辑
+    // 实现重试逻辑的内部函数
     function attemptFetch(retryCount = 0, currentUrlIndex = 0) {
+        // 检查是否超过重试次数上限
         if (retryCount >= maxRetries) {
-            // 如果重试次数用完，使用默认文本
-            console.error('多次尝试获取一言失败，使用默认文本');
-            hitokotoElement.textContent = '好好学习，天天向上！';
+            console.error('多次尝试获取一言失败，已达到最大重试次数（', maxRetries, '次），使用默认文本');
+            setDefaultHitokotoText();
             return;
         }
         
         // 选择API地址（循环使用备用地址）
         const apiUrl = apiUrls[currentUrlIndex % apiUrls.length];
         
+        console.log(`正在尝试获取一言（尝试${retryCount + 1}/${maxRetries}）: ${apiUrl}`);
+        
         // 使用fetch API调用一言接口
         fetch(apiUrl)
             .then(response => {
                 if (!response.ok) {
-                    throw new Error(`HTTP error! status: ${response.status}`);
+                    throw new Error(`HTTP请求失败: 状态码 ${response.status}`);
                 }
                 return response.json();
             })
             .then(data => {
-                // 更新一言文本
-                hitokotoElement.textContent = data.hitokoto || data.content || '好好学习，天天向上！';
-                
-                // 添加淡入效果
-                hitokotoElement.style.opacity = '0';
-                hitokotoElement.style.transform = 'translateY(10px)';
-                
-                // 使用requestAnimationFrame确保样式应用后再进行动画
-                requestAnimationFrame(() => {
-                    hitokotoElement.style.transition = 'opacity 0.5s ease, transform 0.5s ease';
-                    hitokotoElement.style.opacity = '1';
-                    hitokotoElement.style.transform = 'translateY(0)';
-                });
+                // 处理不同API返回的数据格式
+                let textContent = getHitokotoTextFromData(data);
+                updateHitokotoElement(textContent);
             })
             .catch(error => {
-                console.error(`获取一言失败（尝试${retryCount + 1}/${maxRetries}）:`, error);
+                console.error(`获取一言失败（尝试${retryCount + 1}/${maxRetries}）:`, error.message);
                 // 延迟1秒后重试，换一个API地址
                 setTimeout(() => {
                     attemptFetch(retryCount + 1, currentUrlIndex + 1);
                 }, 1000);
             });
+    }
+    
+    // 从不同格式的响应数据中提取一言文本
+    function getHitokotoTextFromData(data) {
+        // 支持多种一言API的数据格式
+        if (typeof data === 'string') {
+            return data.trim() || '好好学习，天天向上！';
+        } else if (data.hitokoto) {
+            return data.hitokoto;
+        } else if (data.content) {
+            return data.content;
+        } else if (data.text) {
+            return data.text;
+        } else {
+            console.warn('无法识别一言API返回的数据格式:', data);
+            return '好好学习，天天向上！';
+        }
+    }
+    
+    // 更新一言元素的文本和动画
+    function updateHitokotoElement(text) {
+        // 保存原始样式，避免动画累积
+        const originalTransition = hitokotoElement.style.transition;
+        const originalOpacity = hitokotoElement.style.opacity;
+        const originalTransform = hitokotoElement.style.transform;
+        
+        // 设置新文本
+        hitokotoElement.textContent = text;
+        
+        // 添加淡入效果
+        hitokotoElement.style.transition = 'none'; // 禁用过渡以立即应用初始状态
+        hitokotoElement.style.opacity = '0';
+        hitokotoElement.style.transform = 'translateY(10px)';
+        
+        // 使用requestAnimationFrame确保样式应用后再进行动画
+        requestAnimationFrame(() => {
+            requestAnimationFrame(() => {
+                // 恢复过渡并应用动画
+                hitokotoElement.style.transition = originalTransition || 'opacity 0.5s ease, transform 0.5s ease';
+                hitokotoElement.style.opacity = originalOpacity || '1';
+                hitokotoElement.style.transform = originalTransform || 'translateY(0)';
+            });
+        });
+    }
+    
+    // 设置默认的一言文本
+    function setDefaultHitokotoText() {
+        updateHitokotoElement('好好学习，天天向上！');
     }
     
     // 开始首次尝试
@@ -268,50 +312,6 @@ export function showCheerMessage() {
             cheerMessage.remove();
         }, 500);
     }, 2000);
-}
-
-// 播放提示音
-function playNotificationSound() {
-    try {
-        // 创建音频上下文
-        const audioContext = new (window.AudioContext || window.webkitAudioContext)();
-        
-        // 创建振荡器
-        const oscillator = audioContext.createOscillator();
-        const gainNode = audioContext.createGain();
-        
-        // 连接节点
-        oscillator.connect(gainNode);
-        gainNode.connect(audioContext.destination);
-        
-        // 设置音频参数 - 增大音量并使用更明显的声音类型
-        oscillator.type = 'square'; // 方波（更明显）
-        oscillator.frequency.value = 1000; // 频率 (Hz) - 略微提高
-        gainNode.gain.value = 0.6; // 音量 - 大幅增加
-        
-        // 播放音频
-        oscillator.start();
-        
-        // 先保持高音量
-        gainNode.gain.setValueAtTime(0.6, audioContext.currentTime);
-        
-        // 0.5秒后开始降低音量
-        gainNode.gain.exponentialRampToValueAtTime(
-            0.001, audioContext.currentTime + 1.5
-        );
-        
-        // 添加频率变化使声音更明显
-        oscillator.frequency.exponentialRampToValueAtTime(
-            500, audioContext.currentTime + 1.5
-        );
-        
-        // 1.5秒后停止
-        setTimeout(() => {
-            oscillator.stop();
-        }, 1500);
-    } catch (error) {
-        console.error('播放提示音失败:', error);
-    }
 }
 
 // 数字补零函数
