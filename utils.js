@@ -1,3 +1,6 @@
+// showAlert函数已移除，根据用户要求不显示任何提示
+
+
 // 一言API调用函数
 export function fetchHitokoto() {
     const hitokotoElement = document.getElementById('hitokoto');

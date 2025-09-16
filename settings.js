@@ -251,11 +251,11 @@ export function initSettings() {
                 
                 // 检查文件大小（限制为50MB）
                 const maxSize = 50 * 1024 * 1024; // 50MB
-                if (sizeLimitEnabled && file.size > maxSize) {
-                    alert('文件大小不能超过50MB！请选择较小的文件，或关闭大小限制开关。');
-                    fileName.textContent = '';
-                    return;
-                }
+                // 文件大小检查已移除，根据用户要求不显示任何提示
+            if (sizeLimitEnabled && file.size > maxSize) {
+                fileName.textContent = '';
+                return;
+            }
                 
                 // 如果禁用了大小限制且文件很大，给用户一个警告
                 if (!sizeLimitEnabled && file.size > maxSize) {
@@ -313,7 +313,7 @@ export function initSettings() {
                         }, 300);
                     } catch (error) {
                         console.error('设置背景时出错:', error);
-                        alert('设置背景时出错，请重试！');
+                        // 错误提示已移除，根据用户要求不显示任何提示
                         if (progressContainer && progressContainer.parentNode) {
                             progressContainer.parentNode.removeChild(progressContainer);
                         }
@@ -323,7 +323,7 @@ export function initSettings() {
                 // 处理读取错误
                 reader.onerror = () => {
                     console.error('文件读取失败');
-                    alert('文件读取失败，请重试！');
+                    // 错误提示已移除，根据用户要求不显示任何提示
                     if (progressContainer && progressContainer.parentNode) {
                         progressContainer.parentNode.removeChild(progressContainer);
                     }
@@ -334,13 +334,13 @@ export function initSettings() {
                     reader.readAsDataURL(file);
                 } catch (error) {
                     console.error('读取文件时发生异常:', error);
-                    alert('读取文件时发生异常，请重试！');
+                    // 错误提示已移除，根据用户要求不显示任何提示
                     if (progressContainer && progressContainer.parentNode) {
                         progressContainer.parentNode.removeChild(progressContainer);
                     }
                 }
             } else {
-                alert('请选择图片或视频文件！');
+                // 提示已移除，根据用户要求不显示任何提示
                 fileName.textContent = '';
             }
         } else {

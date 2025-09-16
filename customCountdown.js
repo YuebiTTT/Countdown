@@ -59,15 +59,13 @@ export function initCustomCountdown() {
         let minutes = parseInt(minutesInput.value) || 0;
         let seconds = parseInt(secondsInput.value) || 0;
         
-        // 验证输入
+        // 输入验证已移除，根据用户要求不显示任何提示
         if (minutes < 0 || minutes > 59 || seconds < 0 || seconds > 59) {
-            alert('请输入有效的分钟和秒数（0-59）');
             return;
         }
         
-        // 确保总时间大于0
+        // 输入验证已移除，根据用户要求不显示任何提示
         if (minutes === 0 && seconds === 0) {
-            alert('请至少设置1秒的倒计时');
             return;
         }
         

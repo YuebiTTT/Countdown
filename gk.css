@@ -156,6 +156,21 @@ h1:hover {
     z-index: 1;
 }
 
+/* 模态框相关样式已移除，根据用户要求不显示任何提示 */
+
+/* 星星动画效果 - 左侧专门区域 */
+.hitokoto::before {
+    content: '✦';
+    position: absolute;
+    left: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: rgba(255, 255, 255, 0.7);
+    font-size: 16px;
+    animation: sparkle 3s infinite;
+    z-index: 1;
+}
+
 /* 右侧装饰 */
 .hitokoto::after {
     content: '';
