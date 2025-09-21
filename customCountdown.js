@@ -55,7 +55,10 @@ export function initCustomCountdown() {
     });
     
     // 开始倒计时
-    startCountdownBtn.addEventListener('click', () => {
+    startCountdownBtn.addEventListener('click', function() {
+        // 确保按钮处于可点击状态
+        this.style.pointerEvents = 'auto';
+        
         let minutes = parseInt(minutesInput.value) || 0;
         let seconds = parseInt(secondsInput.value) || 0;
         
@@ -338,6 +341,9 @@ export function showCustomCountdown() {
     // 设置倒计时状态为活动
     window.customCountdownActive = true;
     
+    // 禁用开始按钮，防止重复点击
+    document.getElementById('startCountdownBtn').disabled = true;
+    
     // 更新倒计时
     updateCustomCountdown();
     
@@ -382,41 +388,94 @@ export function hideCustomCountdown() {
     // 设置倒计时状态为非活动
     window.customCountdownActive = false;
     
+    // 立即启用开始按钮并确保完全可点击
+    const startBtn = document.getElementById('startCountdownBtn');
+    if (startBtn) {
+        // 重置按钮所有可能的限制
+        startBtn.disabled = false;
+        startBtn.style.pointerEvents = 'auto';
+        startBtn.style.opacity = '1';
+        startBtn.style.cursor = 'pointer';
+        startBtn.style.filter = 'none';
+        
+        // 再添加一个小延迟，确保动画效果不会影响点击
+        setTimeout(() => {
+            if (startBtn) {
+                startBtn.disabled = false;
+                startBtn.style.pointerEvents = 'auto';
+                startBtn.style.opacity = '1';
+                startBtn.style.cursor = 'pointer';
+                startBtn.style.filter = 'none';
+            }
+        }, 100);
+    }
+    
     // 确保倒计时按钮可见，以便用户可以再次点击开始新的倒计时
     // 特别是在移动设备上，需要保持按钮可见
     const customCountdownBtn = document.getElementById('customCountdownBtn');
     if (customCountdownBtn) {
+        // 强制显示按钮，移除可能的隐藏类
+        customCountdownBtn.classList.remove('hidden');
         customCountdownBtn.classList.add('visible');
         
         // 增强按钮的可点击性，防止点击穿透到后面的时钟
         // 1. 确保按钮在最顶层
         customCountdownBtn.style.zIndex = '9999';
+        customCountdownBtn.style.display = 'flex';
+        customCountdownBtn.style.opacity = '1';
+        customCountdownBtn.style.pointerEvents = 'auto';
         
-        // 2. 为了确保按钮点击事件正常工作，添加一个小的延时后重新设置可见性
+        // 2. 为了确保按钮点击事件正常工作，添加多重保险的延时设置
         setTimeout(() => {
-            customCountdownBtn.classList.add('visible');
+            if (customCountdownBtn) {
+                customCountdownBtn.classList.add('visible');
+                customCountdownBtn.classList.remove('hidden');
+                customCountdownBtn.style.zIndex = '9999';
+                customCountdownBtn.style.display = 'flex';
+                customCountdownBtn.style.opacity = '1';
+                customCountdownBtn.style.pointerEvents = 'auto';
+            }
         }, 100);
         
-        // 3. 添加一个临时的额外层来增强点击体验
-        if (!document.getElementById('countdownBtnHelper')) {
-            const helperDiv = document.createElement('div');
-            helperDiv.id = 'countdownBtnHelper';
-            helperDiv.style.position = 'fixed';
-            helperDiv.style.bottom = '30px';
-            helperDiv.style.right = '20px';
-            helperDiv.style.width = '60px';
-            helperDiv.style.height = '60px';
-            helperDiv.style.zIndex = '9998';
-            helperDiv.style.pointerEvents = 'none';
-            document.body.appendChild(helperDiv);
-            
-            // 3秒后移除辅助元素，避免长期存在
-            setTimeout(() => {
-                if (helperDiv.parentNode) {
-                    helperDiv.parentNode.removeChild(helperDiv);
-                }
-            }, 3000);
-        }
+        // 3. 额外的延迟再次确保，避免竞态条件
+        setTimeout(() => {
+            if (customCountdownBtn) {
+                customCountdownBtn.classList.add('visible');
+                customCountdownBtn.classList.remove('hidden');
+                customCountdownBtn.style.zIndex = '9999';
+                customCountdownBtn.style.display = 'flex';
+                customCountdownBtn.style.opacity = '1';
+                customCountdownBtn.style.pointerEvents = 'auto';
+            }
+        }, 500);
+        
+        // 4. 添加一个更可靠的临时辅助层来增强点击体验
+        const cleanupHelper = () => {
+            const helperDiv = document.getElementById('countdownBtnHelper');
+            if (helperDiv && helperDiv.parentNode) {
+                helperDiv.parentNode.removeChild(helperDiv);
+            }
+        };
+        
+        // 先清理可能存在的旧辅助元素
+        cleanupHelper();
+        
+        // 创建新的辅助元素
+        const helperDiv = document.createElement('div');
+        helperDiv.id = 'countdownBtnHelper';
+        helperDiv.style.position = 'fixed';
+        helperDiv.style.bottom = '30px';
+        helperDiv.style.right = '20px';
+        helperDiv.style.width = '80px'; // 扩大辅助区域
+        helperDiv.style.height = '80px'; // 扩大辅助区域
+        helperDiv.style.zIndex = '9997';
+        helperDiv.style.pointerEvents = 'none';
+        document.body.appendChild(helperDiv);
+        
+        // 5秒后移除辅助元素，比之前更长的时间以确保效果
+        setTimeout(() => {
+            cleanupHelper();
+        }, 5000);
     }
 }
 
@@ -424,6 +483,9 @@ export function hideCustomCountdown() {
 export function showCheerMessage(customMessage = null) {
     const cheerMessage = document.getElementById('cheerMessage');
     const blurElements = document.querySelectorAll('.blur-target, .background-container');
+    
+    // 确保元素默认不会阻止点击
+    cheerMessage.style.pointerEvents = 'none';
     
     // 先应用模糊效果
     blurElements.forEach(el => el.classList.add('blur-background'));
