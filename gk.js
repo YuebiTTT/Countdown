@@ -1475,4 +1475,19 @@ document.addEventListener('DOMContentLoaded', () => {
         mouseFollower.style.opacity = '0';
     });
     
+    // 点击toggle-setting区域直接切换开关
+    document.querySelectorAll('.toggle-setting').forEach(toggleSetting => {
+        toggleSetting.addEventListener('click', function(e) {
+            // 如果点击的不是开关本身，才触发切换
+            if (!e.target.closest('.switch')) {
+                const checkbox = this.querySelector('input[type="checkbox"]');
+                if (checkbox) {
+                    checkbox.checked = !checkbox.checked;
+                    // 触发change事件
+                    checkbox.dispatchEvent(new Event('change'));
+                }
+            }
+        });
+    });
+    
 });
