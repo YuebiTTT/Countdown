@@ -518,6 +518,42 @@ function initSettings() {
         }, 100);
     }
     
+
+    // 初始化一言边框设置
+    function initHitokotoBorderSettings() {
+        const hitokotoBorderToggle = document.getElementById('hitokotoBorderToggle');
+        const hitokotoElement = document.getElementById('hitokoto');
+        const hitokotoWrapper = document.querySelector('.hitokoto-wrapper');
+        
+        // 从本地存储加载保存的边框设置，默认为启用
+        const savedBorderSetting = localStorage.getItem('hitokotoBorderEnabled');
+        const isBorderEnabled = savedBorderSetting !== null ? savedBorderSetting === 'true' : true;
+        
+        // 设置初始状态
+        hitokotoBorderToggle.checked = isBorderEnabled;
+        updateHitokotoBorder(isBorderEnabled);
+        
+        // 监听开关变化
+        hitokotoBorderToggle.addEventListener('change', () => {
+            const enabled = hitokotoBorderToggle.checked;
+            updateHitokotoBorder(enabled);
+            localStorage.setItem('hitokotoBorderEnabled', enabled.toString());
+        });
+        
+        // 更新一言边框显示的函数
+        function updateHitokotoBorder(enabled) {
+            if (enabled) {
+                // 启用边框效果
+                hitokotoElement.classList.remove('no-border');
+                hitokotoWrapper.classList.remove('no-border');
+            } else {
+                // 禁用边框效果
+                hitokotoElement.classList.add('no-border');
+                hitokotoWrapper.classList.add('no-border');
+            }
+        }
+    }
+
     // 绑定标签页事件
     function bindTabEvents() {
         tabButtons.forEach(button => {
@@ -532,6 +568,9 @@ function initSettings() {
     
     // 初始化字体大小设置
     initFontSizeSettings();
+    
+    // 初始化一言边框设置
+    initHitokotoBorderSettings();
     
     // 绑定标签页事件
     bindTabEvents();
