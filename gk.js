@@ -1415,7 +1415,10 @@ document.addEventListener('DOMContentLoaded', () => {
     
     // 为移动设备添加触摸移动支持
     document.addEventListener('touchmove', (e) => {
-        if (parallaxEnabled && e.touches.length > 0) {
+        // 检查是否在设置弹窗或自定义背景弹窗内滑动
+        const isInModal = e.target.closest('.settings-modal') || e.target.closest('.custom-bg-modal') || e.target.closest('.custom-countdown-modal');
+        
+        if (parallaxEnabled && e.touches.length > 0 && !isInModal) {
             const touch = e.touches[0];
             const windowWidth = window.innerWidth;
             const windowHeight = window.innerHeight;
@@ -1430,8 +1433,10 @@ document.addEventListener('DOMContentLoaded', () => {
             
             // 应用变换效果
             backgroundContainer.style.transform = `translate(${translateX}px, ${translateY}px)`;
+            
+            // 只有在非弹窗区域才阻止默认滚动行为
+            e.preventDefault();
         }
-        e.preventDefault(); // 阻止页面滚动
     }, { passive: false });
     
     // 为背景容器添加平滑过渡效果
