@@ -1216,6 +1216,7 @@ document.addEventListener('DOMContentLoaded', () => {
     let lastTouchTime = 0;
     const DOUBLE_TAP_TIME = 300; // 双击时间间隔阈值
     let isTouchProcessing = false; // 防止事件重复处理
+    let longPressTimer = null; // 长按检测定时器
     
     // 移动端触摸开始处理
     document.addEventListener('touchstart', function(e) {
@@ -1237,20 +1238,29 @@ document.addEventListener('DOMContentLoaded', () => {
             touchStartTime = currentTime;
             lastTouchTime = currentTime;
             
-            // 长按检测
-            setTimeout(() => {
+            // 长按检测：设置定时器，只有当长按超过1000毫秒才显示加油消息
+            longPressTimer = setTimeout(() => {
                 const touchEndTime = new Date().getTime();
-                // 只有在没有触发双击的情况下才检测长按
-                if (lastTouchTime === currentTime && touchEndTime - touchStartTime > 800) { // 长按超过800毫秒
+                // 只有在没有触发双击且确实长按的情况下才显示加油消息
+                if (lastTouchTime === currentTime && touchEndTime - touchStartTime > 2000) {
                     showCheerMessage();
                 }
-            }, 900);
+            }, 1100);
         }
         
         // 允许后续事件处理
         setTimeout(() => {
             isTouchProcessing = false;
         }, 50);
+    });
+    
+    // 添加触摸结束事件处理，清除长按定时器
+    document.addEventListener('touchend', function(e) {
+        // 清除长按检测定时器，防止普通点击被误认为长按
+        if (longPressTimer) {
+            clearTimeout(longPressTimer);
+            longPressTimer = null;
+        }
     });
     
     // 点击波纹特效处理函数
