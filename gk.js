@@ -1117,10 +1117,10 @@ function showCheerMessage(customMessage = null) {
             // 添加错误检查，确保显示正确的消息
             if (exams && exams.length > 0 && currentExamIndex >= 0 && currentExamIndex < exams.length && exams[currentExamIndex] && exams[currentExamIndex].name) {
                 const currentExam = exams[currentExamIndex];
-                cheerMessage.textContent = `${currentExam.name}加油！！！！！ヾ(≧ ▽ ≦)ゝ`;
+                cheerMessage.innerHTML = `<div class="cheer-text">${currentExam.name}加油！！！！！</div><div class="cheer-emoji">ヾ(≧ ▽ ≦)ゝ</div>`;
             } else {
                 // 默认加油消息，确保总是能显示正确的内容
-                cheerMessage.textContent = '加油！！！！！ヾ(≧ ▽ ≦)ゝ';
+                cheerMessage.innerHTML = `<div class="cheer-text">加油！！！！！</div><div class="cheer-emoji">ヾ(≧ ▽ ≦)ゝ</div>`;
             }
         }
         

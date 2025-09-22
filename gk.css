@@ -380,6 +380,27 @@ h1:hover {
         font-size: 2.5em;
         padding: 0 20px;
         text-align: center;
+        white-space: normal;
+        word-wrap: break-word;
+        overflow-wrap: break-word;
+        line-height: 1.3;
+        display: block;
+        box-sizing: border-box;
+        max-width: 95%;
+        word-break: keep-all; /* 防止汉字之间自动换行 */
+        letter-spacing: 0.05em; /* 增加文字间距 */
+    }
+    
+    .cheer-text {
+        font-size: 1.1em;
+        line-height: 1.2;
+        margin-bottom: 0.2em;
+        word-break: keep-all; /* 防止汉字之间自动换行 */
+    }
+    
+    .cheer-emoji {
+        font-size: 0.9em;
+        line-height: 1.2;
     }
 }
 
@@ -397,6 +418,55 @@ h1:hover {
     
     .countdown span {
         display: inline-block;
+    }
+    
+    /* 针对极小屏幕的加油消息适配 */
+    .cheer-message {
+        font-size: 1.5em;
+        padding: 15px 10px;
+        white-space: normal;
+        word-wrap: break-word;
+        overflow-wrap: break-word;
+        max-width: 95%;
+        line-height: 1.4;
+        display: block;
+        box-sizing: border-box;
+        word-break: keep-all; /* 防止汉字之间自动换行 */
+        letter-spacing: 0.05em; /* 增加文字间距 */
+    }
+    
+    .cheer-text {
+        font-size: 1.1em;
+        line-height: 1.2;
+        margin-bottom: 0.2em;
+        word-break: keep-all; /* 防止汉字之间自动换行 */
+    }
+    
+    .cheer-emoji {
+        font-size: 0.9em;
+        line-height: 1.2;
+    }
+    
+    /* 针对非常小的屏幕（如手机竖屏）的超小屏幕优化 */
+    @media (max-width: 360px) {
+        .cheer-message {
+            font-size: 1.3em;
+            padding: 20px 8px;
+            line-height: 1.5;
+            word-break: keep-all; /* 防止汉字之间自动换行 */
+            letter-spacing: 0.05em; /* 增加文字间距 */
+        }
+        
+        .cheer-text {
+            font-size: 1.1em;
+            line-height: 1.2;
+            word-break: keep-all; /* 防止汉字之间自动换行 */
+        }
+        
+        .cheer-emoji {
+            font-size: 0.9em;
+            line-height: 1.2;
+        }
     }
     
     .greeting {
@@ -530,6 +600,22 @@ footer {
     z-index: 1000;
     text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
     filter: none !important;
+    text-align: center;
+    max-width: 90%;
+    word-break: keep-all; /* 防止汉字之间自动换行 */
+    letter-spacing: 0.05em; /* 增加文字间距 */
+}
+
+.cheer-text {
+    font-size: 1.1em;
+    line-height: 1.2;
+    margin-bottom: 0.2em;
+    word-break: keep-all; /* 防止汉字之间自动换行 */
+}
+
+.cheer-emoji {
+    font-size: 0.9em;
+    line-height: 1.2;
 }
 
 .blur-background {
