@@ -26,7 +26,7 @@ const fontSizeSettings = {
 function initSettings() {
     const settingsBtn = document.getElementById('settingsBtn');
     const settingsModal = document.getElementById('settingsModal');
-    const modalClose = document.querySelector('.close-btn');
+    const modalClose = document.querySelector('#settingsModal .close-btn');
     const bgImageUrlInput = document.getElementById('bgImageUrl');
     const presetImages = document.querySelectorAll('.preset-grid .preset-item');
     const presetVideos = document.querySelectorAll('.preset-videos .preset-item');
@@ -947,6 +947,7 @@ function fetchHitokoto(retryCount = 0) {
   const hitokotoElement = document.getElementById("hitokoto");
   const contentElement = document.getElementById("hitokoto-content");
   const sourceElement = document.getElementById("hitokoto-source");
+  const refreshBtn = document.getElementById("refreshHitokotoBtn");
   
   var xhr = new XMLHttpRequest();
   xhr.open('GET', apiUrl, true);
@@ -960,6 +961,19 @@ function fetchHitokoto(retryCount = 0) {
         var response = JSON.parse(xhr.responseText);
         contentElement.innerText = response.hitokoto;
         sourceElement.innerText = response.from ? " —— " + response.from : "";
+        
+        // 更新一言成功后更改按钮文字
+        if (refreshBtn) {
+          const originalText = refreshBtn.textContent;
+          refreshBtn.textContent = "一言已更新";
+          refreshBtn.disabled = true;
+          
+          // 3秒后恢复原始文字
+          setTimeout(() => {
+            refreshBtn.textContent = originalText;
+            refreshBtn.disabled = false;
+          }, 3000);
+        }
       } catch (e) {
         console.error('Error parsing hitokoto response:', e);
         contentElement.innerText = "奋斗是青春最亮丽的底色！";
