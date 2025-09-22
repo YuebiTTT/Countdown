@@ -572,6 +572,63 @@ function initSettings() {
     // 初始化一言边框设置
     initHitokotoBorderSettings();
     
+    // 初始化遮罩层透明度设置
+    function initOverlayOpacitySettings() {
+        const overlayOpacitySlider = document.getElementById('overlayOpacity');
+        const overlayOpacityValue = document.getElementById('overlayOpacityValue');
+        const overlayElement = document.querySelector('.overlay');
+        
+        // 从本地存储加载保存的透明度设置，如果没有则使用默认值
+        const savedOpacity = localStorage.getItem('overlayOpacity');
+        let currentOpacity = savedOpacity ? parseFloat(savedOpacity) : 0.5;
+        
+        // 设置初始透明度
+        function setOverlayOpacity(opacity) {
+            if (overlayElement) {
+                // 获取当前背景色
+                const currentStyle = window.getComputedStyle(overlayElement);
+                const backgroundColor = currentStyle.backgroundColor;
+                
+                // 检查是否为rgba格式
+                if (backgroundColor.includes('rgba')) {
+                    // 提取rgb值
+                    const rgbMatch = backgroundColor.match(/rgba?\((\d+),\s*(\d+),\s*(\d+)/);
+                    if (rgbMatch && rgbMatch.length >= 4) {
+                        const r = rgbMatch[1];
+                        const g = rgbMatch[2];
+                        const b = rgbMatch[3];
+                        // 设置新的rgba值
+                        overlayElement.style.backgroundColor = `rgba(${r}, ${g}, ${b}, ${opacity})`;
+                    }
+                } else {
+                    // 如果是rgb或十六进制颜色，则使用默认的黑色背景
+                    overlayElement.style.backgroundColor = `rgba(10, 10, 10, ${opacity})`;
+                }
+            }
+            
+            // 更新滑块值
+            overlayOpacitySlider.value = opacity;
+            
+            // 更新显示的透明度百分比
+            overlayOpacityValue.textContent = `当前: ${Math.round(opacity * 100)}%`;
+            
+            // 保存到本地存储
+            localStorage.setItem('overlayOpacity', opacity);
+        }
+        
+        // 初始化设置
+        setOverlayOpacity(currentOpacity);
+        
+        // 滑块事件
+        overlayOpacitySlider.addEventListener('input', () => {
+            const opacity = parseFloat(overlayOpacitySlider.value);
+            setOverlayOpacity(opacity);
+        });
+    }
+    
+    // 初始化遮罩层透明度设置
+    initOverlayOpacitySettings();
+    
     // 绑定标签页事件
     bindTabEvents();
     
