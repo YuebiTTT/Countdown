@@ -1211,21 +1211,46 @@ document.addEventListener('DOMContentLoaded', () => {
         updateCountdown(new Date());
     });
 
-    // 移动端触摸事件支持 - 仅保留长按功能
+    // 移动端触摸事件支持
     let touchStartTime = 0;
+    let lastTouchTime = 0;
+    const DOUBLE_TAP_TIME = 300; // 双击时间间隔阈值
+    let isTouchProcessing = false; // 防止事件重复处理
     
-    // 移动端长按显示加油消息
+    // 移动端触摸开始处理
     document.addEventListener('touchstart', function(e) {
-        // 记录触摸开始时间用于长按检测
-        touchStartTime = new Date().getTime();
+        // 防止事件重复处理
+        if (isTouchProcessing) return;
+        isTouchProcessing = true;
         
-        // 长按检测
+        // 记录触摸开始时间
+        const currentTime = new Date().getTime();
+        const tapInterval = currentTime - lastTouchTime;
+        
+        // 判断是否是双击 (快速点击两次)
+        if (tapInterval > 0 && tapInterval < DOUBLE_TAP_TIME) {
+            // 双击事件
+            showCheerMessage();
+            lastTouchTime = 0; // 重置双击检测
+        } else {
+            // 单击事件，记录时间用于长按检测和双击判断
+            touchStartTime = currentTime;
+            lastTouchTime = currentTime;
+            
+            // 长按检测
+            setTimeout(() => {
+                const touchEndTime = new Date().getTime();
+                // 只有在没有触发双击的情况下才检测长按
+                if (lastTouchTime === currentTime && touchEndTime - touchStartTime > 800) { // 长按超过800毫秒
+                    showCheerMessage();
+                }
+            }, 900);
+        }
+        
+        // 允许后续事件处理
         setTimeout(() => {
-            const touchEndTime = new Date().getTime();
-            if (touchEndTime - touchStartTime > 500) { // 长按超过500毫秒
-                showCheerMessage();
-            }
-        }, 600);
+            isTouchProcessing = false;
+        }, 50);
     });
     
     // 点击波纹特效处理函数
