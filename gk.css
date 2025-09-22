@@ -1580,6 +1580,13 @@ h1 {
         height: 45px;
     }
     
+    .settings-btn {
+        bottom: 120px;
+        right: 20px;
+        width: 45px;
+        height: 45px;
+    }
+    
     .custom-countdown-btn {
         bottom: 30px;
         right: 20px;
