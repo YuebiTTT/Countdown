@@ -251,6 +251,17 @@
                                     <span class="switch-slider"></span>
                                 </label>
                             </div>
+                            <div class="custom-hitokoto-section">
+                                <span>自定义一言内容</span>
+                                <textarea id="customHitokotoText" placeholder="请输入您的自定义一言内容..." rows="3"></textarea>
+                                <div class="hitokoto-source-input">
+                                    <input type="text" id="customHitokotoSource" placeholder="来源（可选）">
+                                </div>
+                                <div class="setting-actions">
+                                    <button id="saveCustomHitokotoBtn" class="primary-btn">保存自定义一言</button>
+                                    <button id="resetHitokotoBtn" class="secondary-btn">重置为随机一言</button>
+                                </div>
+                            </div>
                             <button id="refreshHitokotoBtn" class="secondary-btn" onclick="fetchHitokoto()">更新一言</button>
                         </div>
                     </div>

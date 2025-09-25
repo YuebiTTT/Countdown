@@ -220,6 +220,76 @@ h1:hover {
     display: none;
 }
 
+/* 自定义一言设置样式 */
+.custom-hitokoto-section {
+    margin-top: 15px;
+}
+
+#customHitokotoText {
+    width: 100%;
+    min-height: 80px;
+    padding: 10px;
+    margin-top: 8px;
+    background-color: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 6px;
+    color: white;
+    font-size: 14px;
+    resize: vertical;
+    box-sizing: border-box;
+}
+
+#customHitokotoText::placeholder {
+    color: rgba(255, 255, 255, 0.5);
+}
+
+.hitokoto-source-input {
+    margin-top: 10px;
+}
+
+#customHitokotoSource {
+    width: 100%;
+    padding: 8px 10px;
+    background-color: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 6px;
+    color: white;
+    font-size: 14px;
+    box-sizing: border-box;
+}
+
+#customHitokotoSource::placeholder {
+    color: rgba(255, 255, 255, 0.5);
+}
+
+.setting-actions {
+    margin-top: 15px;
+    display: flex;
+    gap: 10px;
+}
+
+.primary-btn {
+    flex: 1;
+    padding: 8px 15px;
+    background: linear-gradient(135deg, rgba(0, 120, 212, 0.8), rgba(0, 78, 146, 0.8));
+    border: 1px solid rgba(0, 120, 212, 0.3);
+    border-radius: 6px;
+    color: white;
+    font-size: 14px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.primary-btn:hover {
+    background: linear-gradient(135deg, rgba(0, 120, 212, 1), rgba(0, 78, 146, 1));
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(0, 120, 212, 0.3);
+}
+
+.primary-btn:active {
+    transform: translateY(0);
+}
+
 @keyframes sparkle {
     0% {
         opacity: 0.5;

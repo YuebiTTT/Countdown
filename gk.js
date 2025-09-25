@@ -942,12 +942,39 @@ function updateCountdown(time) {
 }
 
 function fetchHitokoto(retryCount = 0) {
-  // 更新为更稳定的一言API地址
-  const apiUrl = 'https://v1.hitokoto.cn/';
+  // 优先检查本地存储中是否有自定义一言
+  const customHitokoto = localStorage.getItem('customHitokoto');
+  const customSource = localStorage.getItem('customHitokotoSource');
+  const useCustomHitokoto = localStorage.getItem('useCustomHitokoto') === 'true';
+  
   const hitokotoElement = document.getElementById("hitokoto");
   const contentElement = document.getElementById("hitokoto-content");
   const sourceElement = document.getElementById("hitokoto-source");
   const refreshBtn = document.getElementById("refreshHitokotoBtn");
+  
+  // 如果有自定义一言且启用了自定义一言，则使用自定义一言
+  if (useCustomHitokoto && customHitokoto) {
+    contentElement.innerText = customHitokoto;
+    sourceElement.innerText = customSource ? " —— " + customSource : "";
+    
+    // 更新一言成功后更改按钮文字
+    if (refreshBtn) {
+      const originalText = refreshBtn.textContent;
+      refreshBtn.textContent = "一言已更新";
+      refreshBtn.disabled = true;
+      
+      // 3秒后恢复原始文字
+      setTimeout(() => {
+        refreshBtn.textContent = originalText;
+        refreshBtn.disabled = false;
+      }, 3000);
+    }
+    return;
+  }
+  
+  // 没有自定义一言或未启用，则从API获取
+  // 更新为更稳定的一言API地址
+  const apiUrl = 'https://v1.hitokoto.cn/';
   
   var xhr = new XMLHttpRequest();
   xhr.open('GET', apiUrl, true);
@@ -1013,6 +1040,49 @@ function fetchHitokoto(retryCount = 0) {
   };
   
   xhr.send();
+}
+
+// 保存自定义一言
+function saveCustomHitokoto() {
+  const customText = document.getElementById('customHitokotoText').value.trim();
+  const customSource = document.getElementById('customHitokotoSource').value.trim();
+  
+  if (customText) {
+    localStorage.setItem('customHitokoto', customText);
+    localStorage.setItem('customHitokotoSource', customSource);
+    localStorage.setItem('useCustomHitokoto', 'true');
+    
+    // 立即更新显示的一言
+    fetchHitokoto();
+    
+    // 更新按钮状态
+    const saveBtn = document.getElementById('saveCustomHitokotoBtn');
+    const originalText = saveBtn.textContent;
+    saveBtn.textContent = "保存成功！";
+    
+    // 2秒后恢复原始文字
+    setTimeout(() => {
+      saveBtn.textContent = originalText;
+    }, 2000);
+  }
+}
+
+// 重置为随机一言
+function resetHitokoto() {
+  localStorage.setItem('useCustomHitokoto', 'false');
+  
+  // 立即更新显示的一言
+  fetchHitokoto();
+  
+  // 更新按钮状态
+  const resetBtn = document.getElementById('resetHitokotoBtn');
+  const originalText = resetBtn.textContent;
+  resetBtn.textContent = "已重置！";
+  
+  // 2秒后恢复原始文字
+  setTimeout(() => {
+    resetBtn.textContent = originalText;
+  }, 2000);
 }
 
 function setAutoColor() {
@@ -1256,6 +1326,18 @@ document.addEventListener('DOMContentLoaded', () => {
     // 获取一言
     fetchHitokoto();
     setInterval(fetchHitokoto, 3600000);
+    
+    // 初始化自定义一言功能
+    const saveCustomHitokotoBtn = document.getElementById('saveCustomHitokotoBtn');
+    const resetHitokotoBtn = document.getElementById('resetHitokotoBtn');
+    
+    if (saveCustomHitokotoBtn) {
+        saveCustomHitokotoBtn.addEventListener('click', saveCustomHitokoto);
+    }
+    
+    if (resetHitokotoBtn) {
+        resetHitokotoBtn.addEventListener('click', resetHitokoto);
+    }
 
     // 动态设置字体颜色
     if (!useDynamicColor) {
