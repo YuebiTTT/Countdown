@@ -220,6 +220,52 @@ h1:hover {
     display: none;
 }
 
+/* 统一输入框基础样式 */
+input[type="text"],
+input[type="number"],
+input[type="url"],
+textarea {
+    background-color: rgba(255, 255, 255, 0.08);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    border-radius: 8px;
+    color: #ffffff;
+    font-family: inherit;
+    font-size: 14px;
+    padding: 10px 12px;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    backdrop-filter: blur(5px);
+    box-sizing: border-box;
+}
+
+input[type="text"]:hover,
+input[type="number"]:hover,
+input[type="url"]:hover,
+textarea:hover {
+    background-color: rgba(255, 255, 255, 0.12);
+    border-color: rgba(255, 255, 255, 0.25);
+    transform: translateY(-1px);
+}
+
+input[type="text"]:focus,
+input[type="number"]:focus,
+input[type="url"]:focus,
+textarea:focus {
+    outline: none;
+    background-color: rgba(255, 255, 255, 0.15);
+    border-color: #0078d4;
+    box-shadow: 0 0 0 3px rgba(0, 120, 212, 0.2);
+    transform: translateY(-1px);
+}
+
+input[type="text"]::placeholder,
+input[type="number"]::placeholder,
+input[type="url"]::placeholder,
+textarea::placeholder {
+    color: rgba(255, 255, 255, 0.4);
+    font-style: italic;
+    font-size: 13px;
+}
+
 /* 自定义一言设置样式 */
 .custom-hitokoto-section {
     margin-top: 15px;
@@ -228,19 +274,9 @@ h1:hover {
 #customHitokotoText {
     width: 100%;
     min-height: 80px;
-    padding: 10px;
     margin-top: 8px;
-    background-color: rgba(255, 255, 255, 0.1);
-    border: 1px solid rgba(255, 255, 255, 0.2);
-    border-radius: 6px;
-    color: white;
-    font-size: 14px;
     resize: vertical;
-    box-sizing: border-box;
-}
-
-#customHitokotoText::placeholder {
-    color: rgba(255, 255, 255, 0.5);
+    line-height: 1.5;
 }
 
 .hitokoto-source-input {
@@ -249,17 +285,6 @@ h1:hover {
 
 #customHitokotoSource {
     width: 100%;
-    padding: 8px 10px;
-    background-color: rgba(255, 255, 255, 0.1);
-    border: 1px solid rgba(255, 255, 255, 0.2);
-    border-radius: 6px;
-    color: white;
-    font-size: 14px;
-    box-sizing: border-box;
-}
-
-#customHitokotoSource::placeholder {
-    color: rgba(255, 255, 255, 0.5);
 }
 
 .setting-actions {
@@ -459,6 +484,24 @@ h1:hover {
         max-width: 95%;
         word-break: keep-all; /* 防止汉字之间自动换行 */
         letter-spacing: 0.05em; /* 增加文字间距 */
+    }
+
+    /* 移动设备输入框优化 */
+    input[type="text"],
+    input[type="number"],
+    input[type="url"],
+    textarea {
+        font-size: 16px; /* 防止iOS自动缩放 */
+        padding: 12px 14px;
+        border-radius: 10px;
+    }
+
+    .setting-section {
+        padding: 16px;
+    }
+
+    .tab-pane {
+        padding: 20px 16px;
     }
     
     .cheer-text {
@@ -1121,22 +1164,18 @@ footer {
 }
 
 
-#bgImageUrl {
+/* 背景URL输入框样式 */
+.url-input {
     width: 100%;
-    padding: 10px;
     margin: 10px 0;
-    border: 1px solid #444;
-    border-radius: 4px;
-    box-sizing: border-box;
-    background-color: #2a2a2a;
-    color: #e0e0e0;
-    font-family: inherit;
+    font-family: 'Courier New', monospace;
+    font-size: 13px;
 }
 
-#bgImageUrl:focus {
-    outline: none;
-    border-color: #0078d4;
-    box-shadow: 0 0 0 2px rgba(0, 120, 212, 0.2);
+.url-input-group {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
 }
 
 .apply-btn {
@@ -1789,14 +1828,9 @@ h1 {
     width: 100%;
     padding: 12px;
     margin: 10px 0;
-    border: 1px solid #444;
-    border-radius: 4px;
-    box-sizing: border-box;
-    background-color: #2a2a2a;
-    color: #e0e0e0;
-    font-family: inherit;
     font-size: 18px;
     text-align: center;
+    font-weight: 600;
 }
 
 .input-group input:focus {
