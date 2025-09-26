@@ -287,6 +287,37 @@ textarea::placeholder {
     width: 100%;
 }
 
+/* 一言来源选择下拉菜单样式 */
+.source-select {
+    width: 150px;
+    padding: 8px 12px;
+    background-color: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    border-radius: 8px;
+    color: white;
+    font-size: 14px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    appearance: none;
+    background-image: url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='white' opacity='0.6'%3E%3Cpath d='M7 10l5 5 5-5z'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 10px center;
+    background-size: 16px;
+    padding-right: 35px;
+}
+
+.source-select:focus {
+    outline: none;
+    border-color: rgba(255, 255, 255, 0.6);
+    background-color: rgba(255, 255, 255, 0.15);
+}
+
+.source-select option {
+    background-color: rgba(0, 0, 0, 0.8);
+    color: white;
+    border: none;
+}
+
 .setting-actions {
     margin-top: 15px;
     display: flex;

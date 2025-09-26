@@ -1330,6 +1330,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // 初始化自定义一言功能
     const saveCustomHitokotoBtn = document.getElementById('saveCustomHitokotoBtn');
     const resetHitokotoBtn = document.getElementById('resetHitokotoBtn');
+    const hitokotoSourceSelect = document.getElementById('hitokotoSourceSelect');
     
     if (saveCustomHitokotoBtn) {
         saveCustomHitokotoBtn.addEventListener('click', saveCustomHitokoto);
@@ -1337,6 +1338,37 @@ document.addEventListener('DOMContentLoaded', () => {
     
     if (resetHitokotoBtn) {
         resetHitokotoBtn.addEventListener('click', resetHitokoto);
+    }
+    
+    // 一言来源选择功能
+    if (hitokotoSourceSelect) {
+        const customHitokotoSection = document.querySelector('.custom-hitokoto-section');
+        const refreshHitokotoBtn = document.getElementById('refreshHitokotoBtn');
+        
+        // 初始化下拉菜单的值
+        const useCustomHitokoto = localStorage.getItem('useCustomHitokoto') === 'true';
+        hitokotoSourceSelect.value = useCustomHitokoto ? 'custom' : 'api';
+        
+        // 根据选择的来源显示或隐藏UI元素
+        function updateHitokotoUI(isCustom) {
+            if (customHitokotoSection) {
+                customHitokotoSection.style.display = isCustom ? 'block' : 'none';
+            }
+            if (refreshHitokotoBtn) {
+                refreshHitokotoBtn.style.display = isCustom ? 'none' : 'block';
+            }
+        }
+        
+        // 初始化UI显示
+        updateHitokotoUI(useCustomHitokoto);
+        
+        // 添加事件监听器
+        hitokotoSourceSelect.addEventListener('change', () => {
+            const isCustom = hitokotoSourceSelect.value === 'custom';
+            localStorage.setItem('useCustomHitokoto', isCustom.toString());
+            updateHitokotoUI(isCustom);
+            fetchHitokoto(); // 立即应用更改
+        });
     }
 
     // 动态设置字体颜色
