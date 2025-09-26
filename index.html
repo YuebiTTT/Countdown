@@ -256,6 +256,7 @@
                                 <select id="hitokotoSourceSelect" class="source-select">
                                     <option value="api">一言API</option>
                                     <option value="custom">自定义</option>
+                                    <option value="custom_list">导入多条</option>
                                 </select>
                             </div>
                             <div class="custom-hitokoto-section">
@@ -266,6 +267,18 @@
                                 </div>
                                 <div class="setting-actions">
                                     <button id="saveCustomHitokotoBtn" class="primary-btn">保存自定义一言</button>
+                                </div>
+                            </div>
+                            <div id="customListSection" class="custom-hitokoto-section" style="display: none;">
+                                <span>多条自定义一言</span>
+                                <div class="file-import-section">
+                                    <p>请上传txt文件，每行一条一言，格式为：一言内容[|来源]</p>
+                                    <input type="file" id="hitokotoFileInput" accept=".txt">
+                                    <div id="importStatus" class="import-status"></div>
+                                </div>
+                                <div class="setting-actions">
+                                    <button id="importFileBtn" class="primary-btn">导入文件</button>
+                                    <button id="clearImportedBtn" class="secondary-btn">清除导入</button>
                                 </div>
                             </div>
                             <button id="refreshHitokotoBtn" class="secondary-btn" onclick="fetchHitokoto()">更新一言</button>

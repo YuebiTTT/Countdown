@@ -945,6 +945,7 @@ function fetchHitokoto(retryCount = 0) {
   // 优先检查本地存储中是否有自定义一言
   const customHitokoto = localStorage.getItem('customHitokoto');
   const customSource = localStorage.getItem('customHitokotoSource');
+  const hitokotoSource = localStorage.getItem('hitokotoSource') || '';
   const useCustomHitokoto = localStorage.getItem('useCustomHitokoto') === 'true';
   
   const hitokotoElement = document.getElementById("hitokoto");
@@ -952,7 +953,35 @@ function fetchHitokoto(retryCount = 0) {
   const sourceElement = document.getElementById("hitokoto-source");
   const refreshBtn = document.getElementById("refreshHitokotoBtn");
   
-  // 如果有自定义一言且启用了自定义一言，则使用自定义一言
+  // 如果使用多条自定义一言模式
+  if (hitokotoSource === 'custom_list') {
+    const customHitokotoList = JSON.parse(localStorage.getItem('customHitokotoList') || '[]');
+    
+    if (customHitokotoList && customHitokotoList.length > 0) {
+      // 随机选择一条一言
+      const randomIndex = Math.floor(Math.random() * customHitokotoList.length);
+      const selectedHitokoto = customHitokotoList[randomIndex];
+      
+      contentElement.innerText = selectedHitokoto.content || selectedHitokoto;
+      sourceElement.innerText = selectedHitokoto.source ? " —— " + selectedHitokoto.source : "";
+      
+      // 更新一言成功后更改按钮文字
+      if (refreshBtn) {
+        const originalText = refreshBtn.textContent;
+        refreshBtn.textContent = "一言已更新";
+        refreshBtn.disabled = true;
+        
+        // 3秒后恢复原始文字
+        setTimeout(() => {
+          refreshBtn.textContent = originalText;
+          refreshBtn.disabled = false;
+        }, 3000);
+      }
+      return;
+    }
+  }
+  
+  // 如果有单条自定义一言且启用了自定义一言，则使用自定义一言
   if (useCustomHitokoto && customHitokoto) {
     contentElement.innerText = customHitokoto;
     sourceElement.innerText = customSource ? " —— " + customSource : "";
@@ -1347,27 +1376,146 @@ document.addEventListener('DOMContentLoaded', () => {
         
         // 初始化下拉菜单的值
         const useCustomHitokoto = localStorage.getItem('useCustomHitokoto') === 'true';
-        hitokotoSourceSelect.value = useCustomHitokoto ? 'custom' : 'api';
+        const hitokotoSource = localStorage.getItem('hitokotoSource') || (useCustomHitokoto ? 'custom' : 'api');
+        hitokotoSourceSelect.value = hitokotoSource;
         
         // 根据选择的来源显示或隐藏UI元素
-        function updateHitokotoUI(isCustom) {
+        function updateHitokotoUI(source) {
+            const isCustom = source === 'custom';
+            const isCustomList = source === 'custom_list';
+            
             if (customHitokotoSection) {
                 customHitokotoSection.style.display = isCustom ? 'block' : 'none';
             }
+            
+            const customListSection = document.getElementById('customListSection');
+            if (customListSection) {
+                customListSection.style.display = isCustomList ? 'block' : 'none';
+            }
+            
             if (refreshHitokotoBtn) {
-                refreshHitokotoBtn.style.display = isCustom ? 'none' : 'block';
+                refreshHitokotoBtn.style.display = (isCustom || isCustomList) ? 'none' : 'block';
             }
         }
         
         // 初始化UI显示
-        updateHitokotoUI(useCustomHitokoto);
+        updateHitokotoUI(hitokotoSource);
         
         // 添加事件监听器
         hitokotoSourceSelect.addEventListener('change', () => {
-            const isCustom = hitokotoSourceSelect.value === 'custom';
-            localStorage.setItem('useCustomHitokoto', isCustom.toString());
-            updateHitokotoUI(isCustom);
+            const selectedSource = hitokotoSourceSelect.value;
+            localStorage.setItem('hitokotoSource', selectedSource);
+            localStorage.setItem('useCustomHitokoto', (selectedSource === 'custom').toString());
+            updateHitokotoUI(selectedSource);
             fetchHitokoto(); // 立即应用更改
+        });
+    }
+    
+    // 文件导入功能
+    const importFileBtn = document.getElementById('importFileBtn');
+    const clearImportedBtn = document.getElementById('clearImportedBtn');
+    const hitokotoFileInput = document.getElementById('hitokotoFileInput');
+    const importStatus = document.querySelector('.import-status');
+    
+    // 导入文件函数
+    function importHitokotoFile() {
+        if (!hitokotoFileInput.files.length) {
+            showImportStatus('请选择一个txt文件', 'warning');
+            return;
+        }
+        
+        const file = hitokotoFileInput.files[0];
+        if (file.type !== 'text/plain' && !file.name.endsWith('.txt')) {
+            showImportStatus('请选择txt格式的文件', 'error');
+            return;
+        }
+        
+        const reader = new FileReader();
+        
+        reader.onload = function(e) {
+            try {
+                const content = e.target.result;
+                // 解析文件内容，每行一条一言，格式为：一言内容 -- 来源（可选）
+                const lines = content.split(/[\r\n]+/).filter(line => line.trim());
+                
+                const hitokotoList = lines.map(line => {
+                    // 检查是否有来源部分
+                    const sourceMatch = line.match(/\s*--\s*(.+)$/);
+                    if (sourceMatch) {
+                        return {
+                            content: line.substring(0, sourceMatch.index).trim(),
+                            source: sourceMatch[1].trim()
+                        };
+                    }
+                    return {
+                        content: line.trim(),
+                        source: ''
+                    };
+                });
+                
+                // 保存到本地存储
+                localStorage.setItem('customHitokotoList', JSON.stringify(hitokotoList));
+                showImportStatus(`成功导入${hitokotoList.length}条一言`, 'success');
+                
+                // 如果当前选择的是导入多条模式，立即更新一言
+                if (localStorage.getItem('hitokotoSource') === 'custom_list') {
+                    fetchHitokoto();
+                }
+                
+            } catch (error) {
+                showImportStatus('文件解析失败：' + error.message, 'error');
+            }
+        };
+        
+        reader.onerror = function() {
+            showImportStatus('文件读取失败', 'error');
+        };
+        
+        reader.readAsText(file, 'utf-8');
+    }
+    
+    // 清除导入的一言列表
+    function clearImportedHitokotoList() {
+        if (confirm('确定要清除所有已导入的一言吗？')) {
+            localStorage.removeItem('customHitokotoList');
+            showImportStatus('已清除所有导入的一言', 'info');
+        }
+    }
+    
+    // 显示导入状态
+    function showImportStatus(message, type = 'info') {
+        if (importStatus) {
+            importStatus.textContent = message;
+            
+            // 清除之前的样式类
+            importStatus.className = 'import-status';
+            
+            // 添加对应类型的样式类
+            importStatus.classList.add(type);
+            
+            // 3秒后清除状态信息
+            setTimeout(() => {
+                importStatus.textContent = '';
+                importStatus.className = 'import-status';
+            }, 3000);
+        }
+    }
+    
+    // 绑定事件监听器
+    if (importFileBtn) {
+        importFileBtn.addEventListener('click', importHitokotoFile);
+    }
+    
+    if (clearImportedBtn) {
+        clearImportedBtn.addEventListener('click', clearImportedHitokotoList);
+    }
+    
+    // 当文件选择改变时重置状态
+    if (hitokotoFileInput) {
+        hitokotoFileInput.addEventListener('change', () => {
+            if (importStatus) {
+                importStatus.textContent = '';
+            }
         });
     }
 
