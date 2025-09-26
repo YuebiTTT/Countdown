@@ -365,6 +365,7 @@ textarea::placeholder {
     margin-top: 15px;
     display: flex;
     justify-content: center;
+    gap: 10px;
 }
 
 .primary-btn {
@@ -2076,10 +2077,8 @@ h1 {
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
 }
 
-/* 更新一言按钮居中显示 */
+/* 更新一言按钮样式 */
 #refreshHitokotoBtn {
-    display: block;
-    margin: 0 auto;
     width: 120px;
 }
 
