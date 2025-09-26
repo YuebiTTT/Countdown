@@ -1394,7 +1394,7 @@ document.addEventListener('DOMContentLoaded', () => {
             }
             
             if (refreshHitokotoBtn) {
-                refreshHitokotoBtn.style.display = (isCustom || isCustomList) ? 'none' : 'block';
+                refreshHitokotoBtn.style.display = isCustom ? 'none' : 'block';
             }
         }
         

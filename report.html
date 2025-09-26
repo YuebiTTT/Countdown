@@ -1,0 +1,17 @@
+[34m使用方法:[0m
+  node weekly-git-summary.js [选项]
+
+[32m选项:[0m
+  -h, --help         显示此帮助信息
+  -d, --dir DIR      指定搜索目录 (默认: 当前目录)
+  -s, --since DATE   指定开始日期 (格式: YYYY-MM-DD, 默认: 本周一)
+  -u, --until DATE   指定结束日期 (格式: YYYY-MM-DD, 默认: 今天)
+  -a, --author NAME  只显示指定作者的提交
+  -j, --json         以JSON格式输出结果
+  -m, --md           以Markdown格式输出结果
+  --html             生成HTML可视化文件
+
+[33m示例:[0m
+  node weekly-git-summary.js -d /projects -s 2023-01-01 -u 2023-01-31
+  node weekly-git-summary.js -a '张三' -s 2023-01-01
+  node weekly-git-summary.js -j -s 2023-01-01
