@@ -540,6 +540,9 @@ function initSettings() {
             localStorage.setItem('hitokotoBorderEnabled', enabled.toString());
         });
         
+        // 添加点击一言区域自动更新功能
+        hitokotoElement.addEventListener('click', fetchHitokoto);
+        
         // 更新一言边框显示的函数
         function updateHitokotoBorder(enabled) {
             if (enabled) {
