@@ -321,7 +321,7 @@ textarea::placeholder {
 .setting-actions {
     margin-top: 15px;
     display: flex;
-    gap: 10px;
+    justify-content: center;
 }
 
 .primary-btn {
@@ -2031,6 +2031,13 @@ h1 {
     color: #ffffff;
     transform: translateY(-1px);
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+/* 更新一言按钮居中显示 */
+#refreshHitokotoBtn {
+    display: block;
+    margin: 0 auto;
+    width: 120px;
 }
 
 /* 倒计时时间显示 */
