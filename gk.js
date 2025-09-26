@@ -1518,6 +1518,14 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         });
     }
+    
+    // 自定义文件上传按钮点击事件
+    const customFileUploadBtn = document.getElementById('customFileUploadBtn');
+    if (customFileUploadBtn && hitokotoFileInput) {
+        customFileUploadBtn.addEventListener('click', () => {
+            hitokotoFileInput.click();
+        });
+    }
 
     // 动态设置字体颜色
     if (!useDynamicColor) {

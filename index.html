@@ -273,7 +273,10 @@
                                 <span>多条自定义一言</span>
                                 <div class="file-import-section">
                                     <p>请上传txt文件，每行一条一言，格式为：一言内容[|来源]</p>
-                                    <input type="file" id="hitokotoFileInput" accept=".txt">
+                                    <div class="file-import-btn-wrapper">
+                                        <input type="file" id="hitokotoFileInput" accept=".txt">
+                                        <button id="customFileUploadBtn" class="file-import-btn">选择文件上传</button>
+                                    </div>
                                     <div id="importStatus" class="import-status"></div>
                                 </div>
                                 <div class="setting-actions">
