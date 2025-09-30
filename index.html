@@ -242,6 +242,34 @@
                                     <span>不透明</span>
                                 </div>
                             </div>
+                            
+                            <div class="toggle-setting">
+                                <span>粒子效果</span>
+                                <label class="switch">
+                                    <input type="checkbox" id="enableParticlesToggle" checked>
+                                    <span class="switch-slider"></span>
+                                </label>
+                            </div>
+                            
+                            <div class="slider-control" id="particleCountControl">
+                                <span>粒子数量</span>
+                                <input type="range" id="particleCount" min="10" max="100" step="5" value="50">
+                                <div class="size-indicators">
+                                    <span>少</span>
+                                    <span id="particleCountValue" class="current-size">当前: 50个</span>
+                                    <span>多</span>
+                                </div>
+                            </div>
+
+                            <div class="slider-control" id="particleFrequencyControl">
+                                <span>粒子出现频率</span>
+                                <input type="range" id="particleFrequency" min="100" max="3000" step="100" value="1000">
+                                <div class="size-indicators">
+                                    <span>快</span>
+                                    <span id="particleFrequencyValue" class="current-size">当前: 1秒</span>
+                                    <span>慢</span>
+                                </div>
+                            </div>
                         </div>
                         
                         <div class="setting-section">

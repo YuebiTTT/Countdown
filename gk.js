@@ -13,6 +13,10 @@ let backgroundVideo;
 
 // 效果控制变量
 let rippleEnabled = true; // 默认启用波纹效果
+let particlesEnabled = true; // 默认启用粒子效果
+let maxParticleCount = 50; // 默认最大粒子数量
+let particleFrequency = 1000; // 默认粒子出现频率（毫秒）
+let particleCountInterval; // 用于定时创建粒子的interval
 
 // 一言相关变量
 let lastHitokotoIndex = -1; // 上一次选中的一言索引，-1表示还没有选择过
@@ -1935,25 +1939,127 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
     
+    // 初始化粒子效果控制
+    const enableParticlesToggle = document.getElementById('enableParticlesToggle');
+    const particleCountControl = document.getElementById('particleCountControl');
+    const particleCount = document.getElementById('particleCount');
+    const particleCountValue = document.querySelector('#particleCountControl .current-size');
+    const particleFrequencyControl = document.getElementById('particleFrequencyControl');
+    const particleFrequencySlider = document.getElementById('particleFrequency');
+    const particleFrequencyValue = document.querySelector('#particleFrequencyControl .current-size');
+    
+    if (enableParticlesToggle && particleCountControl && particleCountValue && particleFrequencyControl && particleFrequencySlider && particleFrequencyValue) {
+        // 从本地存储加载保存的设置
+        const savedParticlesState = localStorage.getItem('enableParticles');
+        const savedParticleCount = localStorage.getItem('particleCount');
+        const savedParticleFrequency = localStorage.getItem('particleFrequency');
+        
+        if (savedParticlesState !== null) {
+            particlesEnabled = savedParticlesState === 'true';
+            enableParticlesToggle.checked = particlesEnabled;
+        }
+        
+        if (savedParticleCount !== null) {
+            maxParticleCount = parseInt(savedParticleCount);
+            particleCount.value = maxParticleCount;
+        }
+        
+        if (savedParticleFrequency !== null) {
+            particleFrequency = parseInt(savedParticleFrequency);
+            particleFrequencySlider.value = particleFrequency;
+        }
+        
+        // 更新显示的粒子数量和频率
+        particleCountValue.textContent = `${maxParticleCount}个`;
+        particleFrequencyValue.textContent = `当前: ${Math.round(particleFrequency / 1000)}秒`;
+        
+        // 处理开关状态变化
+        enableParticlesToggle.addEventListener('change', () => {
+            particlesEnabled = enableParticlesToggle.checked;
+            localStorage.setItem('enableParticles', particlesEnabled.toString());
+            
+            // 控制滑块的可见性和可用性
+            if (particlesEnabled) {
+                particleCountControl.classList.remove('disabled');
+                particleCountValue.classList.remove('disabled');
+                particleFrequencyControl.classList.remove('disabled');
+                particleFrequencySlider.classList.remove('disabled');
+                particleFrequencyValue.classList.remove('disabled');
+            } else {
+                particleCountControl.classList.add('disabled');
+                particleCountValue.classList.add('disabled');
+                particleFrequencyControl.classList.add('disabled');
+                particleFrequencySlider.classList.add('disabled');
+                particleFrequencyValue.classList.add('disabled');
+            }
+            
+            // 重新初始化粒子效果
+            initParticles();
+        });
+        
+        // 处理粒子数量滑块值变化
+        particleCount.addEventListener('input', () => {
+            maxParticleCount = parseInt(particleCount.value);
+            localStorage.setItem('particleCount', maxParticleCount.toString());
+            particleCountValue.textContent = `当前: ${maxParticleCount}个`;
+            
+            // 重新初始化粒子效果
+            initParticles();
+        });
+        
+        // 处理粒子频率滑块值变化
+        particleFrequencySlider.addEventListener('input', () => {
+            particleFrequency = parseInt(particleFrequencySlider.value);
+            localStorage.setItem('particleFrequency', particleFrequency.toString());
+            particleFrequencyValue.textContent = `当前: ${Math.round(particleFrequency / 1000)}秒`;
+            
+            // 重新初始化粒子效果以应用新的频率
+            initParticles();
+        });
+        
+        // 初始设置滑块的可见性
+        if (!particlesEnabled) {
+            particleCountControl.classList.add('disabled');
+            particleCountValue.classList.add('disabled');
+            particleFrequencyControl.classList.add('disabled');
+            particleFrequencySlider.classList.add('disabled');
+            particleFrequencyValue.classList.add('disabled');
+        }
+    }
+    
     // 粒子效果初始化函数
     function initParticles() {
         const container = document.getElementById('particles-container');
         if (!container) return;
         
-        // 在移动设备上减少粒子数量以提升性能
-        const particleCount = isMobile ? 20 : 50;
+        // 清除已有的interval
+        if (particleCountInterval) {
+            clearInterval(particleCountInterval);
+        }
+        
+        // 如果粒子效果禁用，清除所有粒子并返回
+        if (!particlesEnabled) {
+            container.innerHTML = '';
+            return;
+        }
+        
+        // 根据设备调整最大粒子数量
+        const adjustedMaxCount = isMobile ? Math.floor(maxParticleCount * 0.5) : maxParticleCount;
+        
+        // 清除所有现有粒子
+        container.innerHTML = '';
         
         // 创建粒子
-        for (let i = 0; i < particleCount; i++) {
+        for (let i = 0; i < adjustedMaxCount; i++) {
             createParticle();
         }
         
         // 定时创建新粒子，保持效果
-        setInterval(() => {
-            if (container.children.length < particleCount) {
+        particleCountInterval = setInterval(() => {
+            if (particlesEnabled && container.children.length < adjustedMaxCount) {
                 createParticle();
             }
-        }, 1000);
+        }, particleFrequency);
         
         // 创建单个粒子的函数
         function createParticle() {
