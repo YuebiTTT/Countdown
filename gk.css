@@ -124,10 +124,41 @@ h1:hover {
     border-left: 1px solid rgba(255, 255, 255, 0.1);
     transition: opacity 0.6s cubic-bezier(0.4, 0, 0.2, 1);
     opacity: 1;
-    display: inline-block;
     min-height: 60px;
     position: relative;
     overflow: hidden;
+}
+
+/* 响应式设计 - 小屏幕 */
+@media (max-width: 768px) {
+    .hitokoto {
+        font-size: 16px;
+        padding: 12px 15px 12px 35px;
+        max-width: 95%;
+    }
+    
+    #hitokoto-source {
+        font-size: 12px;
+    }
+}
+
+/* 响应式设计 - 大屏幕 */
+@media (min-width: 769px) {
+    .hitokoto {
+        max-width: 80%;
+    }
+}
+
+/* 无来源时的样式 */
+#hitokoto-source:empty {
+    display: none;
+    margin-top: 0;
+    height: 0;
+}
+
+/* 确保容器在无来源时不会留出额外空间 */
+.hitokoto:has(#hitokoto-source:empty) {
+    min-height: auto;
 }
 
 #hitokoto-content {
