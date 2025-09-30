@@ -77,7 +77,7 @@ body {
 }
 
 .content {
-    transition: transform 0.3s ease;
+    transition: all 0.3s ease;
     transform-origin: center center;
     transform: translateY(-30px); /* 将内容向上移动30px */
 }
@@ -111,6 +111,15 @@ h1:hover {
     color: #f0f0f0;
     text-shadow: 0 0 4px rgba(255, 255, 255, 0.3);
 }
+.hitokoto-wrapper {
+    transition: all 0.3s ease;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 120px; /* 设置足够大的固定最小高度 */
+    flex-shrink: 0; /* 防止收缩 */
+}
+
 .hitokoto {
     font-size: 20px;
     margin-top: 30px;
@@ -122,7 +131,7 @@ h1:hover {
     background: rgba(255, 255, 255, 0.05);
     backdrop-filter: blur(5px);
     border-left: 1px solid rgba(255, 255, 255, 0.1);
-    transition: opacity 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+    transition: all 0.3s ease;
     opacity: 1;
     min-height: 60px;
     position: relative;
@@ -142,12 +151,6 @@ h1:hover {
     }
 }
 
-/* 响应式设计 - 大屏幕 */
-@media (min-width: 769px) {
-    .hitokoto {
-        max-width: 80%;
-    }
-}
 
 /* 无来源时的样式 */
 #hitokoto-source:empty {
