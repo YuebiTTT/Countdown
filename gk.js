@@ -105,7 +105,7 @@ function initSettings() {
                     }
                 }, 1000); // 增加延迟时间，使按钮停留更久
             }
-        });
+});
         
         // 鼠标悬停在按钮上时始终保持可见
         settingsBtn.addEventListener('mouseenter', () => {
@@ -1935,4 +1935,70 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
     
+    // 粒子效果初始化函数
+    function initParticles() {
+        const container = document.getElementById('particles-container');
+        if (!container) return;
+        
+        // 在移动设备上减少粒子数量以提升性能
+        const particleCount = isMobile ? 20 : 50;
+        
+        // 创建粒子
+        for (let i = 0; i < particleCount; i++) {
+            createParticle();
+        }
+        
+        // 定时创建新粒子，保持效果
+        setInterval(() => {
+            if (container.children.length < particleCount) {
+                createParticle();
+            }
+        }, 1000);
+        
+        // 创建单个粒子的函数
+        function createParticle() {
+            const particle = document.createElement('div');
+            particle.classList.add('particle');
+            
+            // 随机大小 (3-8px)，移动设备上更小
+            const size = isMobile ? Math.random() * 3 + 2 : Math.random() * 5 + 3;
+            particle.style.width = `${size}px`;
+            particle.style.height = `${size}px`;
+            
+            // 随机位置
+            particle.style.left = `${Math.random() * 100}vw`;
+            particle.style.bottom = `-20px`;
+            
+            // 随机颜色透明度
+            const opacity = Math.random() * 0.3 + 0.1;
+            
+            // 随机颜色
+            const hue = Math.random() * 60 + 180; // 180-240 蓝绿色系
+            particle.style.background = `hsla(${hue}, 100%, 80%, ${opacity})`;
+            
+            // 随机动画持续时间 (15-30s)
+            const duration = isMobile ? Math.random() * 10 + 15 : Math.random() * 15 + 15;
+            particle.style.animation = `particleFloat ${duration}s linear forwards`;
+            
+            // 随机延迟，使粒子分散出现
+            particle.style.animationDelay = `${Math.random() * 5}s`;
+            
+            // 随机水平移动范围和方向
+            const translateX = (Math.random() * 40 - 20) + 'vw';
+            particle.style.transform = `translateX(${translateX})`;
+            
+            // 添加到容器
+            container.appendChild(particle);
+            
+            // 动画结束后移除粒子
+            setTimeout(() => {
+                if (particle.parentNode) {
+                    particle.remove();
+                }
+            }, (duration + 5) * 1000);
+        }
+    }
+    
+    // 初始化粒子效果
+    initParticles();
 });
