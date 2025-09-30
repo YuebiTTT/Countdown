@@ -14,6 +14,9 @@ let backgroundVideo;
 // 效果控制变量
 let rippleEnabled = true; // 默认启用波纹效果
 
+// 一言相关变量
+let lastHitokotoIndex = -1; // 上一次选中的一言索引，-1表示还没有选择过
+
 // 字体大小配置
 const fontSizeSettings = {
     small: 0.8,
@@ -982,8 +985,20 @@ function fetchHitokoto(retryCount = 0) {
     const customHitokotoList = JSON.parse(localStorage.getItem('customHitokotoList') || '[]');
     
     if (customHitokotoList && customHitokotoList.length > 0) {
-      // 随机选择一条一言
-      const randomIndex = Math.floor(Math.random() * customHitokotoList.length);
+      // 随机选择一条一言，确保不与上一次相同
+      let randomIndex;
+      if (customHitokotoList.length > 1) {
+        // 如果列表中有多条一言，则确保不与上一次相同
+        do {
+          randomIndex = Math.floor(Math.random() * customHitokotoList.length);
+        } while (randomIndex === lastHitokotoIndex);
+      } else {
+        // 如果只有一条一言，直接选择
+        randomIndex = 0;
+      }
+      
+      // 保存当前索引
+      lastHitokotoIndex = randomIndex;
       const selectedHitokoto = customHitokotoList[randomIndex];
       
       // 执行动画效果
