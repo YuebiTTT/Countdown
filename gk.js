@@ -956,6 +956,27 @@ function fetchHitokoto(retryCount = 0) {
   const sourceElement = document.getElementById("hitokoto-source");
   const refreshBtn = document.getElementById("refreshHitokotoBtn");
   
+  // 渐变淡出动画 - 使用CSS动画
+  function fadeOut(callback) {
+    // 重置所有动画
+    hitokotoElement.style.animation = 'none';
+    // 强制重排以确保动画可以重新开始
+    void hitokotoElement.offsetWidth;
+    // 应用淡出动画
+    hitokotoElement.style.animation = 'fadeOut 0.6s forwards cubic-bezier(0.4, 0, 0.2, 1)';
+    setTimeout(callback, 600); // 延长动画时间，使过渡更平滑
+  }
+  
+  // 渐变淡入动画 - 使用CSS动画
+  function fadeIn() {
+    // 重置所有动画
+    hitokotoElement.style.animation = 'none';
+    // 强制重排以确保动画可以重新开始
+    void hitokotoElement.offsetWidth;
+    // 应用淡入动画
+    hitokotoElement.style.animation = 'fadeIn 0.6s forwards cubic-bezier(0.4, 0, 0.2, 1)';
+  }
+  
   // 如果使用多条自定义一言模式
   if (hitokotoSource === 'custom_list') {
     const customHitokotoList = JSON.parse(localStorage.getItem('customHitokotoList') || '[]');
@@ -965,8 +986,12 @@ function fetchHitokoto(retryCount = 0) {
       const randomIndex = Math.floor(Math.random() * customHitokotoList.length);
       const selectedHitokoto = customHitokotoList[randomIndex];
       
-      contentElement.innerText = selectedHitokoto.content || selectedHitokoto;
-      sourceElement.innerText = selectedHitokoto.source ? " —— " + selectedHitokoto.source : "";
+      // 执行动画效果
+      fadeOut(() => {
+        contentElement.innerText = selectedHitokoto.content || selectedHitokoto;
+        sourceElement.innerText = selectedHitokoto.source ? " —— " + selectedHitokoto.source : "";
+        fadeIn();
+      });
       
       // 更新一言成功后更改按钮文字
       if (refreshBtn) {
@@ -985,24 +1010,28 @@ function fetchHitokoto(retryCount = 0) {
   }
   
   // 如果有单条自定义一言且启用了自定义一言，则使用自定义一言
-  if (useCustomHitokoto && customHitokoto) {
-    contentElement.innerText = customHitokoto;
-    sourceElement.innerText = customSource ? " —— " + customSource : "";
-    
-    // 更新一言成功后更改按钮文字
-    if (refreshBtn) {
-      const originalText = refreshBtn.textContent;
-      refreshBtn.textContent = "一言已更新";
-      refreshBtn.disabled = true;
+    if (useCustomHitokoto && customHitokoto) {
+      // 执行动画效果
+      fadeOut(() => {
+        contentElement.innerText = customHitokoto;
+        sourceElement.innerText = customSource ? " —— " + customSource : "";
+        fadeIn();
+      });
       
-      // 3秒后恢复原始文字
-      setTimeout(() => {
-        refreshBtn.textContent = originalText;
-        refreshBtn.disabled = false;
-      }, 3000);
+      // 更新一言成功后更改按钮文字
+      if (refreshBtn) {
+        const originalText = refreshBtn.textContent;
+        refreshBtn.textContent = "一言已更新";
+        refreshBtn.disabled = true;
+        
+        // 3秒后恢复原始文字
+        setTimeout(() => {
+          refreshBtn.textContent = originalText;
+          refreshBtn.disabled = false;
+        }, 3000);
+      }
+      return;
     }
-    return;
-  }
   
   // 没有自定义一言或未启用，则从API获取
   // 更新为更稳定的一言API地址
@@ -1018,8 +1047,13 @@ function fetchHitokoto(retryCount = 0) {
     if (xhr.status >= 200 && xhr.status < 300) {
       try {
         var response = JSON.parse(xhr.responseText);
-        contentElement.innerText = response.hitokoto;
-        sourceElement.innerText = response.from ? " —— " + response.from : "";
+        
+        // 执行动画效果
+        fadeOut(() => {
+          contentElement.innerText = response.hitokoto;
+          sourceElement.innerText = response.from ? " —— " + response.from : "";
+          fadeIn();
+        });
         
         // 更新一言成功后更改按钮文字
         if (refreshBtn) {
@@ -1035,22 +1069,31 @@ function fetchHitokoto(retryCount = 0) {
         }
       } catch (e) {
         console.error('Error parsing hitokoto response:', e);
-        contentElement.innerText = "奋斗是青春最亮丽的底色！";
-        sourceElement.innerText = "";
+        fadeOut(() => {
+          contentElement.innerText = "奋斗是青春最亮丽的底色！";
+          sourceElement.innerText = "";
+          fadeIn();
+        });
       }
     } else {
       console.error('Error fetching hitokoto:', xhr.status);
       // 设置默认文本，避免显示空白
-      contentElement.innerText = "奋斗是青春最亮丽的底色！";
-      sourceElement.innerText = "";
+      fadeOut(() => {
+        contentElement.innerText = "奋斗是青春最亮丽的底色！";
+        sourceElement.innerText = "";
+        fadeIn();
+      });
     }
   };
   
   // 处理网络错误
   xhr.onerror = function() {
     console.error('Network error when fetching hitokoto');
-    contentElement.innerText = "努力是梦想与现实之间的桥梁！";
-    sourceElement.innerText = "";
+    fadeOut(() => {
+      contentElement.innerText = "努力是梦想与现实之间的桥梁！";
+      sourceElement.innerText = "";
+      fadeIn();
+    });
   };
   
   // 处理超时
@@ -1066,8 +1109,11 @@ function fetchHitokoto(retryCount = 0) {
       }, 1000);
     } else {
       // 重试次数已达上限，显示错误信息
-      contentElement.innerText = "坚持就是胜利！";
-      sourceElement.innerText = "";
+      fadeOut(() => {
+        contentElement.innerText = "坚持就是胜利！";
+        sourceElement.innerText = "";
+        fadeIn();
+      });
     }
   };
   
